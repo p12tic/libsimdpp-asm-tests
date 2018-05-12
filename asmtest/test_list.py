@@ -18,40 +18,55 @@
 from .test_desc import *
 
 def get_all_tests():
-    all_bytes = [16, 32, 64]
-    uint_types = [
-        ("uint8<B>", "uint8<B>", "uint8<B>"),
-        ("uint16<B/2>", "uint16<B/2>", "uint16<B/2>"),
-        ("uint32<B/4>", "uint32<B/4>", "uint32<B/4>"),
-        ("uint64<B/8>", "uint64<B/8>", "uint64<B/8>"),
+    # Returns a dict with test categories as keys and list of tests or test
+    # generators as values
+
+    # We are using the following shorthands to make the test list less verbose
+    b = [16, 32, 64]
+
+    s8 = "int8<B>"
+    s16 = "int16<B/2>"
+    s32 = "int32<B/4>"
+    s64 = "int64<B/8>"
+    u8 = "uint8<B>"
+    u16 = "uint16<B/2>"
+    u32 = "uint32<B/4>"
+    u64 = "uint64<B/8>"
+    f32 = "float32<B/4>"
+    f64 = "float64<B/8>"
+
+    uint3 = [
+        (u8, u8, u8),
+        (u16, u16, u16),
+        (u32, u32, u32),
+        (u64, u64, u64),
     ]
-    float_types = [
-        ("float32<B/4>", "float32<B/4>", "float32<B/4>"),
-        ("float64<B/8>", "float64<B/8>", "float64<B/8>"),
+
+    float3 = [
+        (f32, f32, f32),
+        (f64, f64, f64),
     ]
+
+    TG = TestGenerator
+    CC = CodeCombinator
 
     return {
         'math' : [
-            TestGenerator("vr = add(va, vb);", all_bytes,
-                          uint_types + float_types),
-            TestGenerator("vr = va + vb;", all_bytes,
-                          uint_types + float_types),
-            TestGenerator("vr = sub(va, vb);", all_bytes,
-                          uint_types + float_types),
-            TestGenerator("vr = va - vb;", all_bytes,
-                          uint_types + float_types),
+            TG("vr = add(va, vb);", b, uint3 + float3),
+            TG("vr = va + vb;", b, uint3 + float3),
+            TG("vr = sub(va, vb);", b, uint3 + float3),
+            TG("vr = va - vb;", b, uint3 + float3),
         ],
         'shuffle' : [
-            TestGenerator(
-                CodeCombinator("vr = shuffle4x2<{0}, {1}, {2}, {3}>(va, vb);",
-                               ["0", "1", "2", "3", "4", "5", "6", "7"],
-                               ["0", "1", "2", "3", "4", "5", "6", "7"],
-                               ["0", "1", "2", "3", "4", "5", "6", "7"],
-                               ["0", "1", "2", "3", "4", "5", "6", "7"]),
-                all_bytes, [
-                    ("uint32<B/4>", "uint32<B/4>", "uint32<B/4>"),
-                    ("float32<B/4>", "float32<B/4>", "float32<B/4>"),
+            TG(CC("vr = shuffle4x2<{0}, {1}, {2}, {3}>(va, vb);",
+                ["0", "1", "2", "3", "4", "5", "6", "7"],
+                ["0", "1", "2", "3", "4", "5", "6", "7"],
+                ["0", "1", "2", "3", "4", "5", "6", "7"],
+                ["0", "1", "2", "3", "4", "5", "6", "7"]),
+                b, [
+                    (u32, u32, u32),
+                    (f32, f32, f32),
                 ]
             ),
         ],
-    ]
+    }
