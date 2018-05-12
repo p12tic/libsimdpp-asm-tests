@@ -22,28 +22,16 @@ class TestGetCodeForSingleTest(unittest.TestCase):
 
     def test_null_types(self):
         expected = '''\
-
-
-namespace ns_ident1 {
-static const unsigned B = 20;
-using namespace simdpp;
-
 extern "C"
 const char* test_id_ident1_end(char* pr, const char* pa)
 {
-    uint32x4 va = load(pa);
-    uint32x4 vb = load(pa+B);
-    uint32x4 vc = load(pa+B*2);
-    uint32x4 vr = load(pa+B*3);
-    store(pr, va);
-    store(pr+B, vb);
-    store(pr+B*2, vc);
-    store(pr+B*3, vr);
+    static const unsigned B = 20;
+    using namespace simdpp;
+
     code();
-    store(pr+B*4, vr);
     return "ident1";
 }
-}
+
 '''
         desc = TestDesc('code();', 20, [])
 
@@ -52,28 +40,19 @@ const char* test_id_ident1_end(char* pr, const char* pa)
 
     def test_1_vector_type(self):
         expected = '''\
-
-
-namespace ns_ident1 {
-static const unsigned B = 20;
-using namespace simdpp;
-
 extern "C"
 const char* test_id_ident1_end(char* pr, const char* pa)
 {
-    uint32x4 va = load(pa);
-    uint32x4 vb = load(pa+B);
-    uint32x4 vc = load(pa+B*2);
-    float32<4> vr = load(pa+B*3);
-    store(pr, va);
-    store(pr+B, vb);
-    store(pr+B*2, vc);
-    store(pr+B*3, vr);
+    static const unsigned B = 20;
+    using namespace simdpp;
+
+    float32<4> vr = load(pa+B*0);
+    store(pr+B*0, vr);
     code();
-    store(pr+B*4, vr);
+    store(pr+B*1, vr);
     return "ident1";
 }
-}
+
 '''
         desc = TestDesc('code();', 20, ['float32<4>'])
 
@@ -82,28 +61,25 @@ const char* test_id_ident1_end(char* pr, const char* pa)
 
     def test_4_vector_types(self):
         expected = '''\
-
-
-namespace ns_ident1 {
-static const unsigned B = 20;
-using namespace simdpp;
-
 extern "C"
 const char* test_id_ident1_end(char* pr, const char* pa)
 {
-    uint32<16> va = load(pa);
-    uint16<16> vb = load(pa+B);
+    static const unsigned B = 20;
+    using namespace simdpp;
+
+    uint32<16> va = load(pa+B*0);
+    uint16<16> vb = load(pa+B*1);
     uint8<16> vc = load(pa+B*2);
     float32<4> vr = load(pa+B*3);
-    store(pr, va);
-    store(pr+B, vb);
+    store(pr+B*0, va);
+    store(pr+B*1, vb);
     store(pr+B*2, vc);
     store(pr+B*3, vr);
     code();
     store(pr+B*4, vr);
     return "ident1";
 }
-}
+
 '''
         desc = TestDesc('code();', 20, ['float32<4>', 'uint32<16>',
                                         'uint16<16>', 'uint8<16>'])
@@ -113,28 +89,22 @@ const char* test_id_ident1_end(char* pr, const char* pa)
 
     def test_vector_no_rtype(self):
         expected = '''\
-
-
-namespace ns_ident1 {
-static const unsigned B = 20;
-using namespace simdpp;
-
 extern "C"
 const char* test_id_ident1_end(char* pr, const char* pa)
 {
-    uint32<16> va = load(pa);
-    uint16<16> vb = load(pa+B);
+    static const unsigned B = 20;
+    using namespace simdpp;
+
+    uint32<16> va = load(pa+B*0);
+    uint16<16> vb = load(pa+B*1);
     uint8<16> vc = load(pa+B*2);
-    uint32x4 vr = load(pa+B*3);
-    store(pr, va);
-    store(pr+B, vb);
+    store(pr+B*0, va);
+    store(pr+B*1, vb);
     store(pr+B*2, vc);
-    store(pr+B*3, vr);
     code();
-    store(pr+B*4, vr);
     return "ident1";
 }
-}
+
 '''
         desc = TestDesc('code();', 20, [None, 'uint32<16>',
                                         'uint16<16>', 'uint8<16>'])
@@ -144,28 +114,25 @@ const char* test_id_ident1_end(char* pr, const char* pa)
 
     def test_scalar(self):
         expected = '''\
-
-
-namespace ns_ident1 {
-static const unsigned B = 20;
-using namespace simdpp;
-
 extern "C"
 const char* test_id_ident1_end(char* pr, const char* pa)
 {
-    int va = load(pa);
-    float vb = load(pa+B);
-    unsigned vc = load(pa+B*2);
-    long long vr = load(pa+B*3);
-    store(pr, va);
-    store(pr+B, vb);
-    store(pr+B*2, vc);
-    store(pr+B*3, vr);
+    static const unsigned B = 20;
+    using namespace simdpp;
+
+    int va = *reinterpret_cast<const int*>(pa+B*0);
+    float vb = *reinterpret_cast<const float*>(pa+B*1);
+    unsigned vc = *reinterpret_cast<const unsigned*>(pa+B*2);
+    long long vr = *reinterpret_cast<const long long*>(pa+B*3);
+    *reinterpret_cast<int*>(pr+B*0) = va;
+    *reinterpret_cast<float*>(pr+B*1) = vb;
+    *reinterpret_cast<unsigned*>(pr+B*2) = vc;
+    *reinterpret_cast<long long*>(pr+B*3) = vr;
     code();
-    store(pr+B*4, vr);
+    *reinterpret_cast<long long*>(pr+B*4) = vr;
     return "ident1";
 }
-}
+
 '''
         desc = TestDesc('code();', 20, ['long long', 'int',
                                         'float', 'unsigned'])

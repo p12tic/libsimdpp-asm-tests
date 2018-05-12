@@ -28,43 +28,101 @@ def get_code_for_file_header(insn_set_config):
 '''
     return template.format(defines_lines)
 
+def is_simdpp_type(type):
+    simdpp_type_patterns = [
+        'int8<',
+        'int16<',
+        'int32<',
+        'int64<',
+        'uint8<',
+        'uint16<',
+        'uint32<',
+        'uint64<',
+        'float32<',
+        'float64<',
+        'mask_int8<',
+        'mask_int16<',
+        'mask_int32<',
+        'mask_int64<',
+        'mask_float32<',
+        'mask_float64<',
+    ]
+    for pattern in simdpp_type_patterns:
+        if type.strip().startswith(pattern):
+            return True
+    return False
+
+def get_load_stmt_for_type(type, var, idx):
+    if is_simdpp_type(type):
+        return '    {0} {1} = load(pa+B*{2});'.format(type, var, idx);
+    else:
+        return '    {0} {1} = *reinterpret_cast<const {0}*>(pa+B*{2});'.format(
+                    type, var, idx)
+
+def get_store_stmt_for_type(type, var, idx):
+    if is_simdpp_type(type):
+        return '    store(pr+B*{1}, {0});'.format(var, idx);
+    else:
+        return '    *reinterpret_cast<{0}*>(pr+B*{2}) = {1};'.format(
+                    type, var, idx)
+
 def get_code_for_single_test(test_desc, test_ident):
-    template = '''
-
-namespace ns_{1} {{
-static const unsigned B = {0};
-using namespace simdpp;
-
+    template = '''\
 extern "C"
 const char* test_id_{1}_end(char* pr, const char* pa)
 {{
-    {2} va = load(pa);
-    {3} vb = load(pa+B);
-    {4} vc = load(pa+B*2);
-    {5} vr = load(pa+B*3);
-    store(pr, va);
-    store(pr+B, vb);
-    store(pr+B*2, vc);
-    store(pr+B*3, vr);
-    {6}
-    store(pr+B*4, vr);
+    static const unsigned B = {0};
+    using namespace simdpp;
+
+{2}
     return "{1}";
 }}
-}}
+
 '''
 
-    def handle_null_type(t):
-        if t == None:
-            return "uint32x4"
-        return t
+    lines_code = []
+    lines_load = []
+    lines_store = []
+    pa_idx = 0
+    pr_idx = 0
 
-    rtype = handle_null_type(test_desc.rtype)
-    atype = handle_null_type(test_desc.atype)
-    btype = handle_null_type(test_desc.btype)
-    ctype = handle_null_type(test_desc.ctype)
-    return template.format(test_desc.bytes, test_ident,
-                           atype, btype, ctype, rtype,
-                           test_desc.code)
+    if test_desc.code != '':
+        lines_code.append('    ' + test_desc.code)
+
+    if test_desc.atype is not None:
+        lines_load.append(get_load_stmt_for_type(test_desc.atype,
+                                                 'va', pa_idx))
+        pa_idx += 1
+        lines_store.append(get_store_stmt_for_type(test_desc.atype,
+                                                   'va', pr_idx))
+        pr_idx += 1
+    if test_desc.btype is not None:
+        lines_load.append(get_load_stmt_for_type(test_desc.btype,
+                                                 'vb', pa_idx))
+        pa_idx += 1
+        lines_store.append(get_store_stmt_for_type(test_desc.btype,
+                                                   'vb', pr_idx))
+        pr_idx += 1
+    if test_desc.ctype is not None:
+        lines_load.append(get_load_stmt_for_type(test_desc.ctype,
+                                                 'vc', pa_idx))
+        pa_idx += 1
+        lines_store.append(get_store_stmt_for_type(test_desc.ctype,
+                                                   'vc', pr_idx))
+        pr_idx += 1
+    if test_desc.rtype is not None:
+        lines_load.append(get_load_stmt_for_type(test_desc.rtype,
+                                                 'vr', pa_idx))
+        pa_idx += 1
+        lines_store.append(get_store_stmt_for_type(test_desc.rtype,
+                                                   'vr', pr_idx))
+        pr_idx += 1
+        lines_code.append(get_store_stmt_for_type(test_desc.rtype,
+                                                  'vr', pr_idx))
+        pr_idx += 1
+
+    code = '\n'.join(lines_load + lines_store + lines_code)
+    return template.format(test_desc.bytes, test_ident, code)
 
 def get_code_for_tests(insn_set_config, tests):
     parts = [ get_code_for_file_header(insn_set_config) ]
