@@ -30,24 +30,28 @@ def get_all_tests():
         ("float64<B/8>", "float64<B/8>", "float64<B/8>"),
     ]
 
-    return [
-        TestGenerator("vr = add(va, vb);", all_bytes,
-                      uint_types + float_types),
-        TestGenerator("vr = va + vb;", all_bytes,
-                      uint_types + float_types),
-        TestGenerator("vr = sub(va, vb);", all_bytes,
-                      uint_types + float_types),
-        TestGenerator("vr = va - vb;", all_bytes,
-                      uint_types + float_types),
-        TestGenerator(
-            CodeCombinator("vr = shuffle4x2<{0}, {1}, {2}, {3}>(va, vb);",
-                           ["0", "1", "2", "3", "4", "5", "6", "7"],
-                           ["0", "1", "2", "3", "4", "5", "6", "7"],
-                           ["0", "1", "2", "3", "4", "5", "6", "7"],
-                           ["0", "1", "2", "3", "4", "5", "6", "7"]),
-            all_bytes, [
-                ("uint32<B/4>", "uint32<B/4>", "uint32<B/4>"),
-                ("float32<B/4>", "float32<B/4>", "float32<B/4>"),
-            ]
-        ),
+    return {
+        'math' : [
+            TestGenerator("vr = add(va, vb);", all_bytes,
+                          uint_types + float_types),
+            TestGenerator("vr = va + vb;", all_bytes,
+                          uint_types + float_types),
+            TestGenerator("vr = sub(va, vb);", all_bytes,
+                          uint_types + float_types),
+            TestGenerator("vr = va - vb;", all_bytes,
+                          uint_types + float_types),
+        ],
+        'shuffle' : [
+            TestGenerator(
+                CodeCombinator("vr = shuffle4x2<{0}, {1}, {2}, {3}>(va, vb);",
+                               ["0", "1", "2", "3", "4", "5", "6", "7"],
+                               ["0", "1", "2", "3", "4", "5", "6", "7"],
+                               ["0", "1", "2", "3", "4", "5", "6", "7"],
+                               ["0", "1", "2", "3", "4", "5", "6", "7"]),
+                all_bytes, [
+                    ("uint32<B/4>", "uint32<B/4>", "uint32<B/4>"),
+                    ("float32<B/4>", "float32<B/4>", "float32<B/4>"),
+                ]
+            ),
+        ],
     ]

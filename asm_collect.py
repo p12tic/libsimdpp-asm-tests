@@ -53,14 +53,30 @@ def merge_equivalent_insns(insns):
                         insns.insns[i] -= diff
                         insns.insns[j] += diff
 
-def generate_test_list(tests):
-    ret = []
-    for t in tests:
-        if isinstance(t, TestGenerator):
-            for d in t.generate():
-                ret.append(Test(d, "id" + str(len(ret))))
-        else:
-            ret.append(Test(t, "id" + str(len(ret))))
+def generate_test_list(category_to_tests, categories):
+    ret = {}
+    index = 0
+
+    if categories is None:
+        tests = category_to_tests.items()
+    else:
+        tests = {}
+        for cat in categories:
+            if cat not in category_to_tests:
+                raise Exception('Category {0} does not exist'.format(cat))
+            tests[cat] = category_to_tests[cat]
+
+    for category, test_gen_list in tests.items():
+        test_list = []
+        for t in test_gen_list:
+            if isinstance(t, TestGenerator):
+                for d in t.generate():
+                    test_list.append(Test(d, "id" + str(index)))
+                    index += 1
+            else:
+                test_list.append(Test(t, "id" + str(index)))
+                index += 1
+        ret[category] = test_list
     return ret
 
 def get_name_to_insn_set_map():
@@ -144,7 +160,7 @@ def test_sort_key(test):
     return (test.desc.code, test.desc.bytes, test.desc.rtype,
             test.desc.atype, test.desc.btype, test.desc.ctype)
 
-def print_results(test_list, file):
+def write_results(test_list, file):
     ''' We want json output to be compact, but readable at the same time.
         We group tests that have the same code snippet and also disable json
         indentation for data of each individual test.
@@ -172,6 +188,12 @@ def split_test_list_into_chunks(test_list, tests_per_file):
     for x in range(0, len(test_list), tests_per_file):
         yield test_list[x : x+tests_per_file]
 
+def flatten_tests_by_cat(tests_by_cat):
+    ret = []
+    for cat in sorted(tests_by_cat.keys()):
+        ret += tests_by_cat[cat]
+    return ret
+
 def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
                       tests_per_file):
     num_threads = multiprocessing.cpu_count() + 1
@@ -185,7 +207,8 @@ def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
         # get the number of test cases for progress tracking
         processed_pos = 0
 
-        for config, test_list in test_and_config_list:
+        for config, tests_by_cat in test_and_config_list:
+            test_list = flatten_tests_by_cat(tests_by_cat)
 
             for tests_chunk in split_test_list_into_chunks(test_list,
                                                            tests_per_file):
@@ -203,7 +226,7 @@ def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
             future.result()
             print('Compiled {0}/{1}'.format(processed_pos, total_test_count))
 
-def get_output_location_for_settings(compiler, insn_set_config):
+def get_output_location_for_settings(compiler, insn_set_config, category):
     # only include the major.minor versions into the compiler id
     compiler_version = '.'.join(compiler.version.split('.')[:2])
 
@@ -216,8 +239,20 @@ def get_output_location_for_settings(compiler, insn_set_config):
         short_ids = [ 'none' ]
 
     return os.path.join('{0}_{1}'.format(compiler.name, compiler_version),
-                        '_'.join([ compiler.target_arch ] +
+                        '_'.join([ category, compiler.target_arch ] +
                                  short_ids) + '.json')
+
+def write_results_to_files(output_root, compiler, test_and_config_list):
+    for config, tests_by_cat in test_and_config_list:
+        for cat in sorted(tests_by_cat.keys()):
+            test_list = tests_by_cat[cat]
+
+            rel_path = get_output_location_for_settings(compiler, config, cat)
+            out_path = os.path.join(output_root, rel_path)
+
+            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            with open(out_path, 'w') as out_f:
+                write_results(test_list, out_f)
 
 def main():
     parser = argparse.ArgumentParser(prog='asm_collect')
@@ -230,12 +265,15 @@ def main():
                 'detect supported instruction sets and tests them all. ' +
                 'Allowed values: {0}'.format(
                 ', '.join(get_name_to_insn_set_map().keys())))
+    parser.add_argument('--categories', type=str, default=None,
+            help='Comma-separated list of test categories to generate ' +
+                'results for.')
     parser.add_argument('--tests_per_file', type=int, default=1000,
             help='The number of tests per single compiled file')
     parser.add_argument('--output_root', type=str, default=None,
             help='If this option is given, saves the output to the following '+
                 'location: <output_root>/<compiler_id>/'+
-                '<subcategory>_<arch>_<enabled_insn_sets>.json. '+
+                '<category>_<arch>_<enabled_insn_sets>.json. '+
                 'Missing directories are created if needed.')
     args = parser.parse_args()
 
@@ -256,26 +294,20 @@ def main():
         for config in insn_set_configs:
             print(','.join(config.short_ids()))
 
-    test_list = generate_test_list(get_all_tests())
+    tests_by_cat = generate_test_list(get_all_tests(),
+                                      args.categories.split(','))
 
-    test_and_config_list = [ ( config, copy.deepcopy(test_list) )
+    test_and_config_list = [ ( config, copy.deepcopy(tests_by_cat) )
                              for config in insn_set_configs ]
 
     perform_all_tests(args.libsimdpp, compiler, test_and_config_list,
                       args.tests_per_file)
 
     if args.output_root:
-        for config, test_list in test_and_config_list:
-            out_path = os.path.join(
-                    args.output_root,
-                    get_output_location_for_settings(compiler, config))
-
-
-            os.makedirs(os.path.dirname(out_path), exist_ok=True)
-            with open(out_path, 'w') as out_f:
-                print_results(test_list, out_f)
+        write_results_to_files(args.output_root, compiler,
+                               test_and_config_list)
     else:
-        print_results(test_list, sys.stdout)
+        write_results(flatten_tests_by_cat(tests_by_cat), sys.stdout)
 
 if __name__ == "__main__":
     main()
