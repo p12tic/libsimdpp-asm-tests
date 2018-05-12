@@ -28,7 +28,7 @@ def get_code_for_file_header(insn_set_config):
 '''
     return template.format(defines_lines)
 
-def get_code_for_single_test(test):
+def get_code_for_single_test(test_desc, test_ident):
     template = '''
 
 namespace ns_{1} {{
@@ -58,18 +58,18 @@ const char* test_id_{1}_end(char* pr, const char* pa)
             return "uint32x4"
         return t
 
-    rtype = handle_null_type(test.desc.rtype)
-    atype = handle_null_type(test.desc.atype)
-    btype = handle_null_type(test.desc.btype)
-    ctype = handle_null_type(test.desc.ctype)
-    return template.format(test.desc.bytes, test.ident,
+    rtype = handle_null_type(test_desc.rtype)
+    atype = handle_null_type(test_desc.atype)
+    btype = handle_null_type(test_desc.btype)
+    ctype = handle_null_type(test_desc.ctype)
+    return template.format(test_desc.bytes, test_ident,
                            atype, btype, ctype, rtype,
-                           test.desc.code)
+                           test_desc.code)
 
 def get_code_for_tests(insn_set_config, tests):
     parts = [ get_code_for_file_header(insn_set_config) ]
     for test in tests:
-        parts.append(get_code_for_single_test(test))
+        parts.append(get_code_for_single_test(test.desc, test.ident))
 
     return ''.join(parts)
 
