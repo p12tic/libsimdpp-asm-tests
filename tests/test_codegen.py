@@ -46,10 +46,10 @@ const char* test_id_ident1_end(char* pr, const char* pa)
     static const unsigned B = 20;
     using namespace simdpp;
 
-    float32<4> vr = load(pa+B*0);
-    store(pr+B*0, vr);
+    float32<4> vr = *reinterpret_cast<const float32<4>*>(pa+B*0);
+    *reinterpret_cast<float32<4>*>(pr+B*0) = vr;
     code();
-    store(pr+B*1, vr);
+    *reinterpret_cast<float32<4>*>(pr+B*1) = vr;
     return "ident1";
 }
 
@@ -67,16 +67,16 @@ const char* test_id_ident1_end(char* pr, const char* pa)
     static const unsigned B = 20;
     using namespace simdpp;
 
-    uint32<16> va = load(pa+B*0);
-    uint16<16> vb = load(pa+B*1);
-    uint8<16> vc = load(pa+B*2);
-    float32<4> vr = load(pa+B*3);
-    store(pr+B*0, va);
-    store(pr+B*1, vb);
-    store(pr+B*2, vc);
-    store(pr+B*3, vr);
+    uint32<16> va = *reinterpret_cast<const uint32<16>*>(pa+B*0);
+    uint16<16> vb = *reinterpret_cast<const uint16<16>*>(pa+B*1);
+    uint8<16> vc = *reinterpret_cast<const uint8<16>*>(pa+B*2);
+    float32<4> vr = *reinterpret_cast<const float32<4>*>(pa+B*3);
+    *reinterpret_cast<uint32<16>*>(pr+B*0) = va;
+    *reinterpret_cast<uint16<16>*>(pr+B*1) = vb;
+    *reinterpret_cast<uint8<16>*>(pr+B*2) = vc;
+    *reinterpret_cast<float32<4>*>(pr+B*3) = vr;
     code();
-    store(pr+B*4, vr);
+    *reinterpret_cast<float32<4>*>(pr+B*4) = vr;
     return "ident1";
 }
 
@@ -95,12 +95,12 @@ const char* test_id_ident1_end(char* pr, const char* pa)
     static const unsigned B = 20;
     using namespace simdpp;
 
-    uint32<16> va = load(pa+B*0);
-    uint16<16> vb = load(pa+B*1);
-    uint8<16> vc = load(pa+B*2);
-    store(pr+B*0, va);
-    store(pr+B*1, vb);
-    store(pr+B*2, vc);
+    uint32<16> va = *reinterpret_cast<const uint32<16>*>(pa+B*0);
+    uint16<16> vb = *reinterpret_cast<const uint16<16>*>(pa+B*1);
+    uint8<16> vc = *reinterpret_cast<const uint8<16>*>(pa+B*2);
+    *reinterpret_cast<uint32<16>*>(pr+B*0) = va;
+    *reinterpret_cast<uint16<16>*>(pr+B*1) = vb;
+    *reinterpret_cast<uint8<16>*>(pr+B*2) = vc;
     code();
     return "ident1";
 }

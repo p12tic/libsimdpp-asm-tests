@@ -28,43 +28,13 @@ def get_code_for_file_header(insn_set_config):
 '''
     return template.format(defines_lines)
 
-def is_simdpp_type(type):
-    simdpp_type_patterns = [
-        'int8<',
-        'int16<',
-        'int32<',
-        'int64<',
-        'uint8<',
-        'uint16<',
-        'uint32<',
-        'uint64<',
-        'float32<',
-        'float64<',
-        'mask_int8<',
-        'mask_int16<',
-        'mask_int32<',
-        'mask_int64<',
-        'mask_float32<',
-        'mask_float64<',
-    ]
-    for pattern in simdpp_type_patterns:
-        if type.strip().startswith(pattern):
-            return True
-    return False
-
 def get_load_stmt_for_type(type, var, idx):
-    if is_simdpp_type(type):
-        return '    {0} {1} = load(pa+B*{2});'.format(type, var, idx);
-    else:
-        return '    {0} {1} = *reinterpret_cast<const {0}*>(pa+B*{2});'.format(
-                    type, var, idx)
+    return '    {0} {1} = *reinterpret_cast<const {0}*>(pa+B*{2});'.format(
+            type, var, idx)
 
 def get_store_stmt_for_type(type, var, idx):
-    if is_simdpp_type(type):
-        return '    store(pr+B*{1}, {0});'.format(var, idx);
-    else:
-        return '    *reinterpret_cast<{0}*>(pr+B*{2}) = {1};'.format(
-                    type, var, idx)
+    return '    *reinterpret_cast<{0}*>(pr+B*{2}) = {1};'.format(
+            type, var, idx)
 
 def get_code_for_single_test(test_desc, test_ident):
     template = '''\
