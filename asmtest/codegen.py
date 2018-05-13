@@ -94,6 +94,17 @@ const char* test_id_{1}_end(char* pr, const char* pa)
     code = '\n'.join(lines_load + lines_store + lines_code)
     return template.format(test_desc.bytes, test_ident, code)
 
+def get_code_for_single_capability(cap):
+    return '''
+#ifdef SIMDPP_HAS_{0}
+#if SIMDPP_HAS_{0}
+extern "C" void has_{0}_cap() {{}}
+#else
+extern "C" void has_no_{0}_cap() {{}}
+#endif
+#endif
+'''.format(cap)
+
 def get_code_for_tests(insn_set_config, tests):
     parts = [ get_code_for_file_header(insn_set_config) ]
     for test in tests:
@@ -101,5 +112,9 @@ def get_code_for_tests(insn_set_config, tests):
 
     return ''.join(parts)
 
-def get_code_for_testing_insn_set_support(insn_set_config):
-    return get_code_for_file_header(insn_set_config)
+def get_code_for_testing_insn_set_support(insn_set_config, capabilities):
+    parts = [ get_code_for_file_header(insn_set_config) ]
+    for cap in capabilities:
+        parts.append(get_code_for_single_capability(cap))
+
+    return ''.join(parts)

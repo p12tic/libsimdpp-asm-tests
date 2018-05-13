@@ -39,6 +39,7 @@ class InsnSet:
 class InsnSetConfig:
     def __init__(self, insn_sets):
         self.insn_sets = insn_sets
+        self.capabilities = []
 
     def defines(self):
         insn_set_to_predefined_macro = {
@@ -87,6 +88,12 @@ class InsnSetConfig:
             r = r | insn_set
         return r
 
+    def has_cap(self, cap):
+        if cap not in get_all_capabilities():
+            raise Exception('Unknown capability {0}'.format(cap))
+        return cap in self.capabilities
+
+
 def get_all_insn_set_configs():
     return [
         InsnSetConfig([ InsnSet.X86_SSE2 ]),
@@ -101,4 +108,38 @@ def get_all_insn_set_configs():
         InsnSetConfig([ InsnSet.X86_AVX512F ]),
         InsnSetConfig([ InsnSet.X86_AVX, InsnSet.X86_FMA3 ]),
         InsnSetConfig([ InsnSet.X86_AVX, InsnSet.X86_FMA4 ]),
+    ]
+
+def get_all_capabilities():
+    return [
+        'INT8_SIMD',
+        'INT16_SIMD',
+        'INT32_SIMD',
+        'INT64_SIMD',
+        'FLOAT32_SIMD',
+        'FLOAT64_SIMD',
+
+        'FLOAT64_TO_UINT32_CONVERSION',
+        'INT64_TO_FLOAT64_CONVERSION',
+        'INT64_TO_FLOAT32_CONVERSION',
+        'UINT64_TO_FLOAT64_CONVERSION',
+        'UINT64_TO_FLOAT32_CONVERSION',
+        'FLOAT32_TO_INT64_CONVERSION',
+        'FLOAT32_TO_UINT64_CONVERSION',
+        'FLOAT64_TO_INT64_CONVERSION',
+        'FLOAT64_TO_UINT64_CONVERSION',
+
+        'INT8_SHIFT_L_BY_VECTOR',
+        'UINT8_SHIFT_L_BY_VECTOR',
+        'INT16_SHIFT_L_BY_VECTOR',
+        'UINT16_SHIFT_L_BY_VECTOR',
+        'INT32_SHIFT_L_BY_VECTOR',
+        'UINT32_SHIFT_L_BY_VECTOR',
+
+        'INT8_SHIFT_R_BY_VECTOR',
+        'UINT8_SHIFT_R_BY_VECTOR',
+        'UINT16_SHIFT_R_BY_VECTOR',
+        'INT16_SHIFT_R_BY_VECTOR',
+        'INT32_SHIFT_R_BY_VECTOR',
+        'UINT32_SHIFT_R_BY_VECTOR',
     ]

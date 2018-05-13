@@ -20,7 +20,7 @@ import multiprocessing
 import os
 import re
 import tempfile
-import traceback
+from .asm_parser import *
 from .codegen import *
 from .insn_set import *
 from .utils import *
@@ -231,19 +231,35 @@ def compile_code_to_asm(libsimdpp_path, compiler, insn_set_config,
     with open(asm_path, 'r') as in_f:
         return in_f.read()
 
+def parse_supported_capabilities(asm, capabilities):
+    functions = parse_compiler_asm_output(asm)
+    function_names = [ f.name for f in functions ]
+
+    supported_capabilities = []
+
+    for cap in capabilities:
+        if 'has_{0}_cap'.format(cap) in function_names:
+            supported_capabilities.append(cap)
+        elif 'has_no_{0}_cap'.format(cap) in function_names:
+            pass
+        else:
+            raise Exception('Unknown capability {0}'.format(cap))
+    return supported_capabilities
+
 def detect_insn_set_support(libsimdpp_path, compiler, insn_set_config):
     with tempfile.TemporaryDirectory() as tmp_dir:
-        code = get_code_for_testing_insn_set_support(insn_set_config)
+        caps = get_all_capabilities()
+        code = get_code_for_testing_insn_set_support(insn_set_config, caps)
         try:
             # the following call will throw an exception if the compilation
             # fails. Unsupported instruction sets are disabled within
             # libsimdp source
-            compile_code_to_asm(libsimdpp_path, compiler, insn_set_config,
-                                code, tmp_dir)
-            return True
+            asm = compile_code_to_asm(libsimdpp_path, compiler, insn_set_config,
+                                      code, tmp_dir)
         except:
-            traceback.print_exc()
-            return False
+            return False, []
+
+        return True, parse_supported_capabilities(asm, caps)
 
 def detect_supported_insn_sets(libsimdpp_path, compiler):
     supported_configs = []
@@ -257,6 +273,9 @@ def detect_supported_insn_sets(libsimdpp_path, compiler):
                          for config in all_configs ]
 
         for config, future in work_futures:
-            if future.result():
+            is_supported, capabilities = future.result()
+            if is_supported:
+                config = copy.deepcopy(config)
+                config.capabilities = capabilities
                 supported_configs.append(config)
     return supported_configs

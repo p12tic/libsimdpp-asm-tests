@@ -292,7 +292,9 @@ def main():
 
         print('Supported instruction sets:')
         for config in insn_set_configs:
-            print(','.join(config.short_ids()))
+            lines = [ ','.join(config.short_ids()) + ':' ]
+            lines += [ ('    ' + cap) for cap in config.capabilities ]
+            print('\n'.join(lines))
 
     tests_by_cat = generate_test_list(get_all_tests(),
                                       args.categories.split(','))
