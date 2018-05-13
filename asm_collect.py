@@ -302,11 +302,10 @@ def main():
             lines += [ ('    ' + cap) for cap in config.capabilities ]
             print('\n'.join(lines))
 
-    tests_by_cat = generate_test_list(get_all_tests(),
-                                      args.categories.split(','))
-
-    test_and_config_list = [ ( config, copy.deepcopy(tests_by_cat) )
-                             for config in insn_set_configs ]
+    test_and_config_list = [ ( config,
+                               generate_test_list(get_all_tests(config),
+                                                  args.categories.split(','))
+                             )  for config in insn_set_configs ]
 
     perform_all_tests(args.libsimdpp, compiler, test_and_config_list,
                       args.tests_per_file)
@@ -315,7 +314,8 @@ def main():
         write_results_to_files(args.output_root, compiler,
                                test_and_config_list)
     else:
-        write_results(flatten_tests_by_cat(tests_by_cat), sys.stdout)
+        write_results(flatten_tests_by_cat(test_and_config_list[0][1]),
+                      sys.stdout)
 
 if __name__ == "__main__":
     main()

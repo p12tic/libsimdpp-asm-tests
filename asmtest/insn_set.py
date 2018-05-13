@@ -93,6 +93,23 @@ class InsnSetConfig:
             raise Exception('Unknown capability {0}'.format(cap))
         return cap in self.capabilities
 
+    def has_int8(self):
+        return self.has_cap('INT8_SIMD')
+
+    def has_int16(self):
+        return self.has_cap('INT16_SIMD')
+
+    def has_int32(self):
+        return self.has_cap('INT32_SIMD')
+
+    def has_int64(self):
+        return self.has_cap('INT64_SIMD')
+
+    def has_float32(self):
+        return self.has_cap('INT32_SIMD')
+
+    def has_float64(self):
+        return self.has_cap('INT64_SIMD')
 
 def get_all_insn_set_configs():
     return [
