@@ -129,32 +129,27 @@ def parse_test_insns(asm_output, test_list, baseline_test_list):
 
 def perform_single_compilation(libsimdpp_path, test_dir, compiler,
                                insn_set_config, tests_chunk):
-    try:
-        # compile a second copy of the tests to find out baseline number
-        # of instructions that the test scaffolding emits
-        tests_baseline_chunk = copy.deepcopy(tests_chunk)
-        for i in tests_baseline_chunk:
-            i.ident = i.ident + "_zero"
-            i.desc.code = ""
+    # compile a second copy of the tests to find out baseline number
+    # of instructions that the test scaffolding emits
+    tests_baseline_chunk = copy.deepcopy(tests_chunk)
+    for i in tests_baseline_chunk:
+        i.ident = i.ident + "_zero"
+        i.desc.code = ""
 
-        test_code = get_code_for_tests(insn_set_config,
-                                       tests_chunk + tests_baseline_chunk)
+    test_code = get_code_for_tests(insn_set_config,
+                                   tests_chunk + tests_baseline_chunk)
 
-        # we deliberately don't use tempfile.TemporaryDirectory() so that
-        # the result of failed compilations is preserved
-        curr_test_dir = tempfile.mkdtemp(dir=test_dir)
+    # we deliberately don't use tempfile.TemporaryDirectory() so that
+    # the result of failed compilations is preserved if an exception is raised
+    curr_test_dir = tempfile.mkdtemp(dir=test_dir)
 
-        asm_output = compile_code_to_asm(libsimdpp_path, compiler,
-                                         insn_set_config, test_code,
-                                         curr_test_dir)
+    asm_output = compile_code_to_asm(libsimdpp_path, compiler,
+                                     insn_set_config, test_code,
+                                     curr_test_dir)
 
-        parse_test_insns(asm_output, tests_chunk, tests_baseline_chunk)
+    parse_test_insns(asm_output, tests_chunk, tests_baseline_chunk)
 
-        shutil.rmtree(curr_test_dir)
-
-    except:
-        print("Got exception...")
-        traceback.print_exc()
+    shutil.rmtree(curr_test_dir)
 
 def test_sort_key(test):
     return (test.desc.code, test.desc.bytes, test.desc.rtype,
@@ -199,8 +194,12 @@ def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
     num_threads = multiprocessing.cpu_count() + 1
     print("Using {0} threads\n".format(num_threads))
 
-    with tempfile.TemporaryDirectory() as tmp_dir,\
-         futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+    with futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+
+        # we deliberately don't use tempfile.TemporaryDirectory() so that
+        # the result of failed compilations is preserved if an exception is
+        # raised
+        tmp_dir = tempfile.mkdtemp()
 
         work_futures = []
 
@@ -223,8 +222,15 @@ def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
 
         total_test_count = processed_pos
         for processed_pos, future in work_futures:
-            future.result()
+            try:
+                future.result()
+            except Exception as e:
+                print("Failed to compile...")
+                print(e)
+                return
             print('Compiled {0}/{1}'.format(processed_pos, total_test_count))
+
+        shutil.rmtree(tmp_dir)
 
 def get_output_location_for_settings(compiler, insn_set_config, category):
     # only include the major.minor versions into the compiler id
