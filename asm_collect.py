@@ -58,7 +58,7 @@ def generate_test_list(category_to_tests, categories):
     index = 0
 
     if categories is None:
-        tests = category_to_tests.items()
+        tests = category_to_tests
     else:
         tests = {}
         for cat in categories:
@@ -302,9 +302,13 @@ def main():
             lines += [ ('    ' + cap) for cap in config.capabilities ]
             print('\n'.join(lines))
 
+    categories = None
+    if args.categories is not None:
+        categories = args.categories.split(',')
+
     test_and_config_list = [ ( config,
                                generate_test_list(get_all_tests(config),
-                                                  args.categories.split(','))
+                                                  categories)
                              )  for config in insn_set_configs ]
 
     perform_all_tests(args.libsimdpp, compiler, test_and_config_list,
