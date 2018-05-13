@@ -225,6 +225,8 @@ def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
             try:
                 future.result()
             except Exception as e:
+                for _, future in work_futures:
+                    future.cancel()
                 print("Failed to compile...")
                 print(e)
                 return
