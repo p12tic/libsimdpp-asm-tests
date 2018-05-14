@@ -228,7 +228,7 @@ def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
                 for _, future in work_futures:
                     future.cancel()
                 print("Failed to compile...")
-                print(e)
+                print(e, file=sys.stderr)
                 return
             print('Compiled {0}/{1}'.format(processed_pos, total_test_count))
 
