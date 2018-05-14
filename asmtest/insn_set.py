@@ -20,21 +20,27 @@
 import copy
 
 class InsnSet:
-    X86_SSE2 = 1 << 0
-    X86_SSE3 = 1 << 1
-    X86_SSSE3 = 1 << 2
-    X86_SSE4_1 = 1 << 3
-    X86_POPCNT = 1 << 4
-    X86_AVX = 1 << 5
-    X86_AVX2 = 1 << 6
-    X86_FMA3 = 1 << 7
-    X86_FMA4 = 1 << 8
-    X86_XOP = 1 << 9
-    X86_AVX512F = 1 << 10
-    X86_AVX512BW = 1 << 11
-    X86_AVX512DQ = 1 << 12
-    X86_AVX512VL = 1 << 13
-    ARM_NEON = 1 << 14
+    X86_SSE2 = 1
+    X86_SSE3 = 2
+    X86_SSSE3 = 3
+    X86_SSE4_1 = 4
+    X86_POPCNT = 5
+    X86_AVX = 6
+    X86_AVX2 = 7
+    X86_FMA3 = 8
+    X86_FMA4 = 9
+    X86_XOP = 10
+    X86_AVX512F = 11
+    X86_AVX512BW = 12
+    X86_AVX512DQ = 13
+    X86_AVX512VL = 14
+    ARM_NEON = 15
+    ARM_NEON_FLT_SP = 16
+    ARM64_NEON = 17
+    MIPS_MSA = 18
+    POWER_ALTIVEC = 19
+    POWER_VSX_206 = 20
+    POWER_VSX_207 = 21
 
 class InsnSetConfig:
     def __init__(self, insn_sets):
@@ -58,6 +64,12 @@ class InsnSetConfig:
             InsnSet.X86_AVX512DQ: "SIMDPP_ARCH_X86_AVX512DQ",
             InsnSet.X86_AVX512VL: "SIMDPP_ARCH_X86_AVX512VL",
             InsnSet.ARM_NEON: "SIMDPP_ARCH_ARM_NEON",
+            InsnSet.ARM_NEON_FLT_SP: "SIMDPP_ARCH_ARM_NEON_FLT_SP",
+            InsnSet.ARM64_NEON: "SIMDPP_ARCH_ARM64_NEON",
+            InsnSet.MIPS_MSA: "SIMDPP_ARCH_MIPS_MSA",
+            InsnSet.POWER_ALTIVEC: "SIMDPP_ARCH_POWER_ALTIVEC",
+            InsnSet.POWER_VSX_206: "SIMDPP_ARCH_POWER_VSX_206",
+            InsnSet.POWER_VSX_207: "SIMDPP_ARCH_POWER_VSX_207",
         }
         return [ insn_set_to_predefined_macro[insn_set]
                  for insn_set in self.insn_sets ]
@@ -78,15 +90,15 @@ class InsnSetConfig:
             InsnSet.X86_AVX512DQ: "avx512dq",
             InsnSet.X86_AVX512VL: "avx512vl",
             InsnSet.ARM_NEON: "neon",
+            InsnSet.ARM_NEON_FLT_SP: "neon_flt_sp",
+            InsnSet.ARM64_NEON: "neon64",
+            InsnSet.MIPS_MSA: "neon64",
+            InsnSet.POWER_ALTIVEC: "altivec",
+            InsnSet.POWER_VSX_206: "vsx_206",
+            InsnSet.POWER_VSX_207: "vsx_207",
         }
         return [ insn_sets_to_short_id[insn_set]
                  for insn_set in self.insn_sets ]
-
-    def mask(self):
-        r = 0
-        for insn_set in self.insn_sets:
-            r = r | insn_set
-        return r
 
     def has_cap(self, cap):
         if cap not in get_all_capabilities():
@@ -122,9 +134,23 @@ def get_all_insn_set_configs():
         InsnSetConfig([ InsnSet.X86_FMA3 ]),
         InsnSetConfig([ InsnSet.X86_FMA4 ]),
         InsnSetConfig([ InsnSet.X86_XOP ]),
-        InsnSetConfig([ InsnSet.X86_AVX512F ]),
         InsnSetConfig([ InsnSet.X86_AVX, InsnSet.X86_FMA3 ]),
         InsnSetConfig([ InsnSet.X86_AVX, InsnSet.X86_FMA4 ]),
+        InsnSetConfig([ InsnSet.X86_AVX, InsnSet.X86_XOP ]),
+        InsnSetConfig([ InsnSet.X86_AVX512F ]),
+        InsnSetConfig([ InsnSet.X86_AVX512F, InsnSet.X86_FMA3 ]),
+        InsnSetConfig([ InsnSet.X86_AVX512F,
+                        InsnSet.X86_FMA3,
+                        InsnSet.X86_AVX512BW,
+                        InsnSet.X86_AVX512DQ,
+                        InsnSet.X86_AVX512VL ]),
+        InsnSetConfig([ InsnSet.ARM_NEON ]),
+        InsnSetConfig([ InsnSet.ARM_NEON_FLT_SP ]),
+        InsnSetConfig([ InsnSet.ARM64_NEON ]),
+        InsnSetConfig([ InsnSet.MIPS_MSA ]),
+        InsnSetConfig([ InsnSet.POWER_ALTIVEC ]),
+        InsnSetConfig([ InsnSet.POWER_VSX_206 ]),
+        InsnSetConfig([ InsnSet.POWER_VSX_207 ]),
     ]
 
 def get_all_capabilities():

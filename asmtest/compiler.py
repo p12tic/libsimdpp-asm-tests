@@ -80,6 +80,14 @@ class CompilerGcc(CompilerGccBase):
             ( InsnSet.X86_AVX512BW, [ '-mavx512bw' ] ),
             ( InsnSet.X86_AVX512DQ, [ '-mavx512dq' ] ),
             ( InsnSet.X86_AVX512VL, [ '-mavx512vl' ] ),
+            ( InsnSet.ARM_NEON, [ '-mfpu=neon' ] ),
+            ( InsnSet.ARM_NEON_FLT_SP, [ '-mfpu=neon' ] ),
+            ( InsnSet.ARM64_NEON, [ '-mfpu=neon' ] ),
+            ( InsnSet.MIPS_MSA, [ '-mips64r5', '-mmsa', '-mhard-float',
+                                  '-mfp64', '-mnan=legacy' ] ),
+            ( InsnSet.POWER_ALTIVEC, [ '-maltivec' ] ),
+            ( InsnSet.POWER_VSX_206, [ '-mvsx' ] ),
+            ( InsnSet.POWER_VSX_207, [ '-mvsx', '-mcpu=power8' ] ),
         )
         return self.add_insn_set_flags(insn_to_flags, flags,
                                    invocation.insn_set.insn_sets)
@@ -155,9 +163,10 @@ class CompilerMsvcIntel(CompilerMsvcBase):
 def detect_compiler_from_version_output(output):
     lines = output.splitlines()
 
-    m = re.match('g\+\+\s*\([^)]*\)\s*([\d.-]+)\s*', lines[0])
-    if m:
-        return ('gcc', m.group(1))
+    if 'g++' in lines[0]:
+        m = re.match('.*\([^)]*\)\s*([\d.-]+)(?:|\s.*)', lines[0])
+        if m:
+            return ('gcc', m.group(1))
 
     m = re.match('clang version ([\d.-]+)\s.*', lines[0])
     if m:
