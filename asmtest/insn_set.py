@@ -65,7 +65,7 @@ class InsnSetConfig:
             InsnSet.X86_AVX512VL: "SIMDPP_ARCH_X86_AVX512VL",
             InsnSet.ARM_NEON: "SIMDPP_ARCH_ARM_NEON",
             InsnSet.ARM_NEON_FLT_SP: "SIMDPP_ARCH_ARM_NEON_FLT_SP",
-            InsnSet.ARM64_NEON: "SIMDPP_ARCH_ARM64_NEON",
+            InsnSet.ARM64_NEON: "SIMDPP_ARCH_ARM_NEON",
             InsnSet.MIPS_MSA: "SIMDPP_ARCH_MIPS_MSA",
             InsnSet.POWER_ALTIVEC: "SIMDPP_ARCH_POWER_ALTIVEC",
             InsnSet.POWER_VSX_206: "SIMDPP_ARCH_POWER_VSX_206",
