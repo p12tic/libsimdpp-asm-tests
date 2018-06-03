@@ -234,9 +234,25 @@ def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
 
         shutil.rmtree(tmp_dir)
 
+
 def get_output_location_for_settings(compiler, insn_set_config, category):
-    # only include the major.minor versions into the compiler id
-    compiler_version = '.'.join(compiler.version.split('.')[:2])
+    compiler_version = compiler.version.split('.')
+    version_components = 2
+
+    if compiler.name == 'gcc':
+        if int(compiler_version[0]) >= 5:
+            version_components = 1
+        else:
+            version_components = 2
+
+    if compiler.name == 'clang':
+        if int(compiler_version[0]) >= 4:
+            version_components = 1
+        else:
+            version_components = 2
+
+    # remove bugfix and minor version components if needed
+    compiler_version = '.'.join(compiler_version[:version_components])
 
     target_arch = compiler.target_arch
     if target_arch is None:
