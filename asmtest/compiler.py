@@ -82,7 +82,7 @@ class CompilerGcc(CompilerGccBase):
             ( InsnSet.X86_AVX512VL, [ '-mavx512vl' ] ),
             ( InsnSet.ARM_NEON, [ '-mfpu=neon' ] ),
             ( InsnSet.ARM_NEON_FLT_SP, [ '-mfpu=neon' ] ),
-            ( InsnSet.ARM64_NEON, [ '-mfpu=neon' ] ),
+            ( InsnSet.ARM64_NEON, [ '-mcpu=generic+simd' ] ),
             ( InsnSet.MIPS_MSA, [ '-mips64r5', '-mmsa', '-mhard-float',
                                   '-mfp64', '-mnan=legacy' ] ),
             ( InsnSet.POWER_ALTIVEC, [ '-maltivec' ] ),
