@@ -15,7 +15,8 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
-from .test_desc import *
+from asmtest.test_desc import CodeCombinator
+from asmtest.test_desc import TestGenerator
 
 def get_all_tests(config):
     # Returns a dict with test categories as keys and list of tests or test
@@ -102,61 +103,61 @@ def get_all_tests(config):
     ]
 
     # 2xB wide vectors
-    i8_x2 = 'int8<B*2>'
+    i8_x2 = 'int8<B*2>' # noqa: F841
     i16_x2 = 'int16<B>'
-    i32_x2 = 'int32<B/2>'
-    i64_x2 = 'int64<B/4>'
-    u8_x2 = 'uint8<B*2>'
+    i32_x2 = 'int32<B/2>' # noqa: F841
+    i64_x2 = 'int64<B/4>' # noqa: F841
+    u8_x2 = 'uint8<B*2>' # noqa: F841
     u16_x2 = 'uint16<B>'
-    u32_x2 = 'uint32<B/2>'
-    u64_x2 = 'uint64<B/4>'
-    f32_x2 = 'float32<B/2>'
-    f64_x2 = 'float64<B/4>'
+    u32_x2 = 'uint32<B/2>' # noqa: F841
+    u64_x2 = 'uint64<B/4>' # noqa: F841
+    f32_x2 = 'float32<B/2>' # noqa: F841
+    f64_x2 = 'float64<B/4>' # noqa: F841
 
-    mi8_x2 = 'mask_int8<B*2>'
-    mi16_x2 = 'mask_int16<B>'
-    mi32_x2 = 'mask_int32<B/2>'
-    mi64_x2 = 'mask_int64<B/4>'
-    mf32_x2 = 'mask_float32<B/2>'
-    mf64_x2 = 'mask_float64<B/4>'
+    mi8_x2 = 'mask_int8<B*2>' # noqa: F841
+    mi16_x2 = 'mask_int16<B>' # noqa: F841
+    mi32_x2 = 'mask_int32<B/2>' # noqa: F841
+    mi64_x2 = 'mask_int64<B/4>' # noqa: F841
+    mf32_x2 = 'mask_float32<B/2>' # noqa: F841
+    mf64_x2 = 'mask_float64<B/4>' # noqa: F841
 
     # 4xB wide vectors
-    i8_x4 = 'int8<B*4>'
-    i16_x4 = 'int16<B*2>'
+    i8_x4 = 'int8<B*4>' # noqa: F841
+    i16_x4 = 'int16<B*2>' # noqa: F841
     i32_x4 = 'int32<B>'
-    i64_x4 = 'int64<B/2>'
-    u8_x4 = 'uint8<B*4>'
-    u16_x4 = 'uint16<B*2>'
+    i64_x4 = 'int64<B/2>' # noqa: F841
+    u8_x4 = 'uint8<B*4>'  # noqa: F841
+    u16_x4 = 'uint16<B*2>'  # noqa: F841
     u32_x4 = 'uint32<B>'
-    u64_x4 = 'uint64<B/2>'
+    u64_x4 = 'uint64<B/2>'  # noqa: F841
     f32_x4 = 'float32<B>'
-    f64_x4 = 'float64<B/2>'
+    f64_x4 = 'float64<B/2>'  # noqa: F841
 
-    mi8_x4 = 'mask_int8<B*4>'
-    mi16_x4 = 'mask_int16<B*2>'
-    mi32_x4 = 'mask_int32<B>'
-    mi64_x4 = 'mask_int64<B/2>'
-    mf32_x4 = 'mask_float32<B>'
-    mf64_x4 = 'mask_float64<B/2>'
+    mi8_x4 = 'mask_int8<B*4>'  # noqa: F841
+    mi16_x4 = 'mask_int16<B*2>'  # noqa: F841
+    mi32_x4 = 'mask_int32<B>'  # noqa: F841
+    mi64_x4 = 'mask_int64<B/2>'  # noqa: F841
+    mf32_x4 = 'mask_float32<B>'  # noqa: F841
+    mf64_x4 = 'mask_float64<B/2>'  # noqa: F841
 
     # 8xB wide vectors
-    i8_x8 = 'int8<B*8>'
-    i16_x8 = 'int16<B*4>'
-    i32_x8 = 'int32<B*2>'
+    i8_x8 = 'int8<B*8>'  # noqa: F841
+    i16_x8 = 'int16<B*4>'  # noqa: F841
+    i32_x8 = 'int32<B*2>'  # noqa: F841
     i64_x8 = 'int64<B>'
-    u8_x8 = 'uint8<B*8>'
-    u16_x8 = 'uint16<B*4>'
-    u32_x8 = 'uint32<B*2>'
+    u8_x8 = 'uint8<B*8>'  # noqa: F841
+    u16_x8 = 'uint16<B*4>'  # noqa: F841
+    u32_x8 = 'uint32<B*2>'  # noqa: F841
     u64_x8 = 'uint64<B>'
-    f32_x8 = 'float32<B*2>'
+    f32_x8 = 'float32<B*2>'  # noqa: F841
     f64_x8 = 'float64<B>'
 
-    mi8_x8 = 'mask_int8<B*8>'
-    mi16_x8 = 'mask_int16<B*4>'
-    mi32_x8 = 'mask_int32<B*2>'
-    mi64_x8 = 'mask_int64<B>'
-    mf32_x8 = 'mask_float32<B*2>'
-    mf64_x8 = 'mask_float64<B>'
+    mi8_x8 = 'mask_int8<B*8>'  # noqa: F841
+    mi16_x8 = 'mask_int16<B*4>'  # noqa: F841
+    mi32_x8 = 'mask_int32<B*2>'  # noqa: F841
+    mi64_x8 = 'mask_int64<B>'  # noqa: F841
+    mf32_x8 = 'mask_float32<B*2>'  # noqa: F841
+    mf64_x8 = 'mask_float64<B>'  # noqa: F841
 
     TG = TestGenerator
     CC = CodeCombinator
@@ -180,7 +181,7 @@ def get_all_tests(config):
         [ ( f64, f64, mf64 ) ] if config.has_float64() else [],
     ]
 
-    bitwise_sc_constant_types = uint_2 + float_2 + mask_2
+    # bitwise_sc_constant_types = uint_2 + float_2 + mask_2
     bitwise_sc_value_types = uint_3_sc + [
         [ ( f32, f32, 'uint32_t' ) ] if config.has_int32() else [],
         [ ( f64, f64, 'uint64_t' ) ] if config.has_int64() else [],

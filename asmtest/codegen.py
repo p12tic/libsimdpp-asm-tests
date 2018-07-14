@@ -15,8 +15,6 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
-from .insn_set import *
-
 def get_code_for_file_header(insn_set_config):
     defines_lines = ""
     for define in insn_set_config.defines():

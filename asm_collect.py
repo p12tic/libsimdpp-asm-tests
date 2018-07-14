@@ -19,16 +19,27 @@
 
 import argparse
 import copy
-import itertools
 import json
 import multiprocessing
 import os
 import shutil
 import sys
 import tempfile
-import traceback
 from concurrent import futures
-from asmtest import *
+from asmtest.test_list import get_all_tests
+from asmtest.asm_parser import InsnCount
+from asmtest.asm_parser import parse_compiler_asm_output
+from asmtest.codegen import get_code_for_tests
+from asmtest.test_desc import group_tests_by_code
+from asmtest.test_desc import Test
+from asmtest.test_desc import TestGenerator
+from asmtest.compiler import detect_supported_insn_sets
+from asmtest.compiler import compile_code_to_asm
+from asmtest.compiler import detect_compiler
+from asmtest.json_utils import NoIndentJsonEncoder
+from asmtest.json_utils import NoIndent
+from asmtest.insn_set import InsnSetConfig
+from asmtest.insn_set import InsnSet
 
 def merge_equivalent_insns(insns):
     ''' This function merges the instruction counts of equivalent instructions.

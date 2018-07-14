@@ -16,14 +16,17 @@
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
 from concurrent import futures
+import copy
 import multiprocessing
 import os
 import re
 import tempfile
-from .asm_parser import *
-from .codegen import *
-from .insn_set import *
-from .utils import *
+from asmtest.utils import call_program
+from asmtest.insn_set import get_all_insn_set_configs
+from asmtest.insn_set import InsnSet
+from asmtest.insn_set import get_all_capabilities
+from asmtest.asm_parser import parse_compiler_asm_output
+from asmtest.codegen import get_code_for_testing_insn_set_support
 
 class CompilerInvocation:
     def __init__(self, insn_set, simdpp_path, src_path, dst_path):

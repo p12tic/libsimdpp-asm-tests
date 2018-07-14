@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
-from asmtest import *
+from asmtest.codegen import detect_compiler_from_version_output
 import unittest
 
 class TestDetectCompilerFromVersionOutput(unittest.TestCase):

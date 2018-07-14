@@ -15,7 +15,8 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
-from asmtest import *
+from asmtest.codegen import get_code_for_single_test
+from asmtest.test_desc import TestDesc
 import unittest
 
 class TestGetCodeForSingleTest(unittest.TestCase):
@@ -139,4 +140,3 @@ const char* test_id_ident1_end(char* pr, const char* pa)
 
         self.maxDiff = None
         self.assertEqual(expected, get_code_for_single_test(desc, 'ident1'))
-
