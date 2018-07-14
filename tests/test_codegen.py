@@ -15,9 +15,11 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
+import unittest
+
 from asmtest.codegen import get_code_for_single_test
 from asmtest.test_desc import TestDesc
-import unittest
+
 
 class TestGetCodeForSingleTest(unittest.TestCase):
 

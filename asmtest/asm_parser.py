@@ -17,6 +17,7 @@
 
 import re
 
+
 class AsmFunction:
     ''' Defines a function parsed from compiler output. Stores a list of
         parsed instruction names and function name

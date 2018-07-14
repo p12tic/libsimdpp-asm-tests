@@ -15,10 +15,12 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
+import unittest
+
+from asmtest.asm_parser import AsmFunction
 from asmtest.asm_parser import InsnCount
 from asmtest.asm_parser import parse_compiler_asm_output
-from asmtest.asm_parser import AsmFunction
-import unittest
+
 
 class TestParserCompilerAsmOutput(unittest.TestCase):
 

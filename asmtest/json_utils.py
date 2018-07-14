@@ -20,6 +20,7 @@
 import json
 import re
 
+
 class NoIndent(object):
     def __init__(self, value):
         self.value = value

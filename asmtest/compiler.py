@@ -15,18 +15,20 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
-from concurrent import futures
 import copy
 import multiprocessing
 import os
 import re
 import tempfile
-from asmtest.utils import call_program
-from asmtest.insn_set import get_all_insn_set_configs
-from asmtest.insn_set import InsnSet
-from asmtest.insn_set import get_all_capabilities
+from concurrent import futures
+
 from asmtest.asm_parser import parse_compiler_asm_output
 from asmtest.codegen import get_code_for_testing_insn_set_support
+from asmtest.insn_set import InsnSet
+from asmtest.insn_set import get_all_capabilities
+from asmtest.insn_set import get_all_insn_set_configs
+from asmtest.utils import call_program
+
 
 class CompilerInvocation:
     def __init__(self, insn_set, simdpp_path, src_path, dst_path):

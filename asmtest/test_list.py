@@ -18,6 +18,7 @@
 from asmtest.test_desc import CodeCombinator
 from asmtest.test_desc import TestGenerator
 
+
 def get_all_tests(config):
     # Returns a dict with test categories as keys and list of tests or test
     # generators as values
