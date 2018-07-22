@@ -100,6 +100,8 @@ class InsnCount:
     def add_insn(self, insn, count=1):
         if insn in self.insns:
             self.insns[insn] += count
+            if self.insns[insn] == 0:
+                del self.insns[insn]
         elif count != 0:
             self.insns[insn] = count
 

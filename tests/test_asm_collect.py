@@ -136,6 +136,14 @@ class TestMergeEquivalentInsns(unittest.TestCase):
 
         self.assertEqual(expected, count.insns)
 
+    def test_does_not_leave_zero(self):
+        count = InsnCount()
+        count.insns = {'movapd': 3, 'movaps': -3}
+
+        merge_equivalent_insns(count)
+
+        self.assertEqual({}, count.insns)
+
 
 class TestWriteResults(unittest.TestCase):
 

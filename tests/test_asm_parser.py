@@ -139,3 +139,28 @@ class TestInsnCountFromInsnList(unittest.TestCase):
         insns = ['1', '2', '1']
         expected = {'1': 2, '2': 1}
         self.assertEqual(expected, InsnCount.from_insn_list(insns).insns)
+
+
+class TestInsnCount(unittest.TestCase):
+
+    def test_add_insn_does_not_add_zero_insn_count(self):
+        count = InsnCount()
+        count.add_insn('mov', 0)
+        self.assertEqual({}, count.insns)
+
+    def test_add_insn_does_not_add_zero_insn_count_from_nonzero(self):
+        count = InsnCount()
+        count.sub_insn('mov', 1)
+        count.add_insn('mov', 1)
+        self.assertEqual({}, count.insns)
+
+    def test_sub_insn_does_not_add_zero_insn_count(self):
+        count = InsnCount()
+        count.sub_insn('mov', 0)
+        self.assertEqual({}, count.insns)
+
+    def test_sub_insn_does_not_add_zero_insn_count_from_nonzero(self):
+        count = InsnCount()
+        count.add_insn('mov', 1)
+        count.sub_insn('mov', 1)
+        self.assertEqual({}, count.insns)
