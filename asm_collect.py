@@ -27,6 +27,7 @@ import sys
 import tempfile
 from concurrent import futures
 
+from asmtest.asm_collect import get_output_location_for_settings
 from asmtest.asm_parser import InsnCount
 from asmtest.asm_parser import parse_compiler_asm_output
 from asmtest.codegen import get_code_for_tests
@@ -256,38 +257,6 @@ def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
             print('Compiled {0}/{1}'.format(processed_pos, total_test_count))
 
         shutil.rmtree(tmp_dir)
-
-
-def get_output_location_for_settings(compiler, insn_set_config, category):
-    compiler_version = compiler.version.split('.')
-    version_components = 2
-
-    if compiler.name == 'gcc':
-        if int(compiler_version[0]) >= 5:
-            version_components = 1
-        else:
-            version_components = 2
-
-    if compiler.name == 'clang':
-        if int(compiler_version[0]) >= 4:
-            version_components = 1
-        else:
-            version_components = 2
-
-    # remove bugfix and minor version components if needed
-    compiler_version = '.'.join(compiler_version[:version_components])
-
-    target_arch = compiler.target_arch
-    if target_arch is None:
-        target_arch = 'unknown'
-
-    short_ids = insn_set_config.short_ids()
-    if len(short_ids) == 0:
-        short_ids = ['none']
-
-    return os.path.join('{0}_{1}'.format(compiler.name, compiler_version),
-                        '_'.join([category, compiler.target_arch] +
-                                 short_ids) + '.json')
 
 
 def write_results_to_files(output_root, compiler, test_and_config_list):
