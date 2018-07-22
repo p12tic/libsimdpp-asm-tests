@@ -319,7 +319,8 @@ def main():
             ', '.join(get_name_to_insn_set_map().keys())))
     parser.add_argument(
         '--categories', type=str, default=None,
-        help='Comma-separated list of test categories to generate results for.')
+        help='Comma-separated list of test categories to generate results '
+             'for.')
     parser.add_argument(
         '--tests_per_file', type=int, default=1000,
         help='The number of tests per single compiled file')
@@ -368,6 +369,7 @@ def main():
     else:
         write_results(flatten_tests_by_cat(test_and_config_list[0][1]),
                       sys.stdout)
+
 
 if __name__ == "__main__":
     main()

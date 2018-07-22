@@ -201,7 +201,7 @@ def get_target_arch(compiler_path, compiler_name):
         try:
             out = call_program([compiler_path, '-dumpmachine'])
             return out.split('-')[0]
-        except:
+        except Exception:
             return None
     return None
 
@@ -292,7 +292,7 @@ def detect_insn_set_support(libsimdpp_path, compiler, insn_set_config):
             # libsimdp source
             asm = compile_code_to_asm(libsimdpp_path, compiler,
                                       insn_set_config, code, tmp_dir)
-        except:
+        except Exception:
             return False, []
 
         return True, parse_supported_capabilities(asm, caps)

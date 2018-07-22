@@ -55,19 +55,20 @@ class CodeCombinator:
         ''' Generates tuples each containing formatted template and a
             potentially empty list of arguments used to format the template.
         '''
-        if self.a1 == None:
+        if self.a1 is None:
             yield [(self.template, [])]
-        elif self.a2 == None:
+        elif self.a2 is None:
             for q1 in self.a1:
                 yield (self.template.format(q1), [q1])
-        elif self.a3 == None:
+        elif self.a3 is None:
             for (q1, q2) in itertools.product(self.a1, self.a2):
                 yield (self.template.format(q1, q2), [q1, q2])
-        elif self.a4 == None:
+        elif self.a4 is None:
             for (q1, q2, q3) in itertools.product(self.a1, self.a2, self.a3):
                 yield (self.template.format(q1, q2, q3), [q1, q2, q3])
         else:
-            for (q1, q2, q3, q4) in itertools.product(self.a1, self.a2, self.a3, self.a4):
+            for (q1, q2, q3, q4) in itertools.product(self.a1, self.a2,
+                                                      self.a3, self.a4):
                 yield (self.template.format(q1, q2, q3, q4), [q1, q2, q3, q4])
 
 
@@ -161,13 +162,13 @@ class Test:
         else:
             ret['success'] = False
 
-        if self.desc.rtype != None:
+        if self.desc.rtype is not None:
             ret['vr'] = self.desc.rtype
-        if self.desc.atype != None:
+        if self.desc.atype is not None:
             ret['va'] = self.desc.atype
-        if self.desc.btype != None:
+        if self.desc.btype is not None:
             ret['vb'] = self.desc.btype
-        if self.desc.ctype != None:
+        if self.desc.ctype is not None:
             ret['vc'] = self.desc.ctype
         return ret
 

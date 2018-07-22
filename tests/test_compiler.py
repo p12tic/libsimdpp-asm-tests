@@ -28,7 +28,7 @@ class TestDetectCompilerFromVersionOutput(unittest.TestCase):
                          detect_compiler_from_version_output(output))
 
     def test_gcc_with_date(self):
-        output = 'arm-linux-gnueabihf-g++-5 (Ubuntu/Linaro 5.4.1-8ubuntu1) 5.4.1 20170304'
+        output = 'arm-linux-gnueabihf-g++-5 (Ubuntu/Linaro 5.4.1-8ubuntu1) 5.4.1 20170304'  # noqa: E501
         self.assertEqual(('gcc', '5.4.1'),
                          detect_compiler_from_version_output(output))
 

@@ -235,23 +235,23 @@ def get_all_tests(config):
 
     cmp_types = [
         [(mi8, i8, i8)] if config.has_int8() else [],
-        #( mi8, mi8, i8 ),
-        #( mi8, mi8, mi8 ),
+        # ( mi8, mi8, i8 ),
+        # ( mi8, mi8, mi8 ),
         [(mi16, i16, i16)] if config.has_int16() else [],
-        #( mi16, mi16, i16 ),
-        #( mi16, mi16, mi16 ),
+        # ( mi16, mi16, i16 ),
+        # ( mi16, mi16, mi16 ),
         [(mi32, i32, i32)] if config.has_int32() else [],
-        #( mi32, mi32, i32 ),
-        #( mi32, mi32, mi32 ),
+        # ( mi32, mi32, i32 ),
+        # ( mi32, mi32, mi32 ),
         [(mi64, i64, i64)] if config.has_int64() else [],
-        #( mi64, mi64, i64 ),
-        #( mi64, mi64, mi64 ),
+        # ( mi64, mi64, i64 ),
+        # ( mi64, mi64, mi64 ),
         [(mf32, f32, f32)] if config.has_float32() else [],
-        #( mf32, mf32, f32 ),
-        #( mf32, mf32, mf32 ),
+        # ( mf32, mf32, f32 ),
+        # ( mf32, mf32, mf32 ),
         [(mf64, f64, f64)] if config.has_float64() else [],
-        #( mf64, mf64, f64 ),
-        #( mf64, mf64, mf64 ),
+        # ( mf64, mf64, f64 ),
+        # ( mf64, mf64, mf64 ),
     ]
 
     shift_scalar_types = [
@@ -338,9 +338,9 @@ def get_all_tests(config):
         TG('vr = sign(va);', b, float_2),
 
         TG('vr = min(va, vb);', b, int_3 + uint_3 + float_3),
-           # TODO: min might not be supported until AVX2
+        # TODO: min might not be supported until AVX2
         TG('vr = max(va, vb);', b, int_3 + uint_3 + float_3),
-           # TODO: max might not be supported
+        # TODO: max might not be supported
 
         TG('vr = isnan(va);', b, float_2),
         TG('vr = isnan2(va, vb);', b, float_3),

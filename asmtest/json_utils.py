@@ -46,7 +46,7 @@ class NoIndentJsonEncoder(json.JSONEncoder):
         try:
             key = int(match.group(1))
             return self._replacement_list[key]
-        except:
+        except Exception:
             raise Exception('Could not parse {0}'.format(match.group(0)))
 
     def default(self, o):
