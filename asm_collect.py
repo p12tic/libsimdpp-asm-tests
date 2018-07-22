@@ -21,7 +21,6 @@ from __future__ import print_function
 
 import argparse
 import copy
-import json
 import multiprocessing
 import os
 import shutil
@@ -33,17 +32,15 @@ from asmtest.asm_collect import get_name_to_insn_set_map
 from asmtest.asm_collect import get_output_location_for_settings
 from asmtest.asm_collect import merge_equivalent_insns
 from asmtest.asm_collect import parse_insn_sets
+from asmtest.asm_collect import write_results
 from asmtest.asm_parser import InsnCount
 from asmtest.asm_parser import parse_compiler_asm_output
 from asmtest.codegen import get_code_for_tests
 from asmtest.compiler import compile_code_to_asm
 from asmtest.compiler import detect_compiler
 from asmtest.compiler import detect_supported_insn_sets
-from asmtest.json_utils import NoIndent
-from asmtest.json_utils import NoIndentJsonEncoder
 from asmtest.test_desc import Test
 from asmtest.test_desc import TestGenerator
-from asmtest.test_desc import group_tests_by_code
 from asmtest.test_list import get_all_tests
 
 
@@ -119,36 +116,6 @@ def perform_single_compilation(libsimdpp_path, test_dir, compiler,
     parse_test_insns(asm_output, tests_chunk, tests_baseline_chunk)
 
     shutil.rmtree(curr_test_dir)
-
-
-def test_sort_key(test):
-    return (test.desc.code, test.desc.bytes, test.desc.rtype,
-            test.desc.atype, test.desc.btype, test.desc.ctype)
-
-
-def write_results(test_list, file):
-    ''' We want json output to be compact, but readable at the same time.
-        We group tests that have the same code snippet and also disable json
-        indentation for data of each individual test.
-    '''
-    json_data = []
-    for group in group_tests_by_code(test_list):
-        if len(group) > 1:
-            json_group_tests = [test.to_json()
-                                for test in sorted(group, key=test_sort_key)]
-            for json_test in json_group_tests:
-                json_test.pop('code')
-            json_group = {
-                'code': group[0].desc.code,
-                'tests': [NoIndent(json_test)
-                          for json_test in json_group_tests],
-            }
-            json_data.append(json_group)
-        else:
-            json_data.append(NoIndent(group[0].to_json()))
-
-    json.dump(json_data, file, sort_keys=True, indent=2,
-              cls=NoIndentJsonEncoder)
 
 
 def split_test_list_into_chunks(test_list, tests_per_file):

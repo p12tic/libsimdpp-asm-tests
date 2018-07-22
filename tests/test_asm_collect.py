@@ -17,15 +17,25 @@
 
 from __future__ import print_function
 
+import sys
 import unittest
 
 from asmtest.asm_collect import get_output_location_for_settings
 from asmtest.asm_collect import merge_equivalent_insns
 from asmtest.asm_collect import parse_insn_sets
+from asmtest.asm_collect import write_results
 from asmtest.asm_parser import InsnCount
 from asmtest.compiler import CompilerBase
 from asmtest.insn_set import InsnSet
 from asmtest.insn_set import InsnSetConfig
+from asmtest.test_desc import Test
+from asmtest.test_desc import TestDesc
+
+if sys.version_info[0] < 3:
+    # io.StringIO only supports unicode strings
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 
 class TestGetOutputLocationForSettings(unittest.TestCase):
@@ -125,3 +135,37 @@ class TestMergeEquivalentInsns(unittest.TestCase):
         expected = {'movaps': 3, 'vmovaps': 2}
 
         self.assertEqual(expected, count.insns)
+
+
+class TestWriteResults(unittest.TestCase):
+
+    def test_failure(self):
+        desc = TestDesc('code;code', 16, ['float32<4>', 'int32<4>'])
+        test = Test(desc, 'id123')
+
+        file = StringIO()
+        write_results([test], file)
+
+        expected = '''\
+[
+  {"bytes": 16, "code": "code;code", "success": false, "va": "int32<4>", "vr": "float32<4>"}
+]'''  # noqa: max-line-length
+
+        self.assertEqual(expected, file.getvalue())
+
+    def test_success(self):
+        desc = TestDesc('code;code', 16, ['float32<4>', 'int32<4>'])
+        test = Test(desc, 'id123')
+        insns = InsnCount()
+        insns.insns = {'movaps': 3, 'mulps': 2}
+        test.insns = insns
+
+        file = StringIO()
+        write_results([test], file)
+
+        expected = '''\
+[
+  {"bytes": 16, "code": "code;code", "va": "int32<4>", "vr": "float32<4>", "zinsns": {"movaps": 3, "mulps": 2}}
+]'''  # noqa: max-line-length
+
+        self.assertEqual(expected, file.getvalue())

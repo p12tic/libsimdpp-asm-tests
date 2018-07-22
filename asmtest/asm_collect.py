@@ -18,10 +18,14 @@
 
 from __future__ import print_function
 
+import json
 import os
 
 from asmtest.insn_set import InsnSet
 from asmtest.insn_set import InsnSetConfig
+from asmtest.json_utils import NoIndent
+from asmtest.json_utils import NoIndentJsonEncoder
+from asmtest.test_desc import group_tests_by_code
 
 
 def get_output_location_for_settings(compiler, insn_set_config, category):
@@ -104,3 +108,34 @@ def merge_equivalent_insns(insns):
                 count = insns.insns[eq_insn]
                 insns.sub_insn(eq_insn, count)
                 insns.add_insn(main_insn, count)
+
+
+def test_sort_key(test):
+    return (test.desc.code, test.desc.bytes, test.desc.rtype,
+            test.desc.atype, test.desc.btype, test.desc.ctype)
+
+
+def write_results(test_list, file):
+    ''' Given a list of Test instances, writes everything to a file as json.
+        We want json output to be compact, but readable at the same time.
+        We group tests that have the same code snippet and also disable json
+        indentation for data of each individual test.
+    '''
+    json_data = []
+    for group in group_tests_by_code(test_list):
+        if len(group) > 1:
+            json_group_tests = [test.to_json()
+                                for test in sorted(group, key=test_sort_key)]
+            for json_test in json_group_tests:
+                json_test.pop('code')
+            json_group = {
+                'code': group[0].desc.code,
+                'tests': [NoIndent(json_test)
+                          for json_test in json_group_tests],
+            }
+            json_data.append(json_group)
+        else:
+            json_data.append(NoIndent(group[0].to_json()))
+
+    json.dump(json_data, file, sort_keys=True, indent=2,
+              cls=NoIndentJsonEncoder)
