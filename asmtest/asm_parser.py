@@ -68,7 +68,7 @@ def parse_compiler_asm_output(output):
             cur_function.add(parts[0])
         else:
             # may be a function name
-            m = re.match('(\w*):.*', line)
+            m = re.match(r'(\w*):.*', line)
             if m is not None:
                 function_name = m.group(1)
                 if cur_function is not None:

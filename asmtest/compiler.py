@@ -39,7 +39,7 @@ class CompilerInvocation:
         self.dst_path = dst_path
 
 
-class CompilerBase:
+class CompilerBase(object):
 
     def __init__(self):
         self.name = None
@@ -76,7 +76,7 @@ class CompilerGccBase(CompilerBase):
 class CompilerGcc(CompilerGccBase):
 
     def get_flags(self, invocation):
-        flags = super().get_flags(invocation)
+        flags = super(CompilerGcc, self).get_flags(invocation)
         insn_to_flags = (
             (InsnSet.X86_SSE2, ['-msse2']),
             (InsnSet.X86_SSE3, ['-msse3']),
@@ -108,7 +108,7 @@ class CompilerGcc(CompilerGccBase):
 class CompilerGccIntel(CompilerGccBase):
 
     def get_flags(self, invocation):
-        flags = super().get_flags(invocation)
+        flags = super(CompilerGccIntel, self).get_flags(invocation)
         insn_to_flags = (
             (InsnSet.X86_SSE2, ['-msse2']),
             (InsnSet.X86_SSE3, ['-msse3']),
@@ -142,7 +142,7 @@ class CompilerMsvcBase(CompilerBase):
 class CompilerMsvc(CompilerMsvcBase):
 
     def get_flags(self, invocation):
-        flags = super().get_flags(invocation)
+        flags = super(CompilerMsvc, self).get_flags(invocation)
         insn_to_flags = (
             (InsnSet.X86_SSE2, ['/arch:SSE2']),
             (InsnSet.X86_SSE3, ['/arch:SSE2']),
@@ -161,7 +161,7 @@ class CompilerMsvc(CompilerMsvcBase):
 class CompilerMsvcIntel(CompilerMsvcBase):
 
     def get_flags(self, invocation):
-        flags = super().get_flags(invocation)
+        flags = super(CompilerMsvcIntel, self).get_flags(invocation)
         insn_to_flags = (
             (InsnSet.X86_SSE2, ['/arch:SSE2']),
             (InsnSet.X86_SSE3, ['/arch:SSE3']),
@@ -185,11 +185,11 @@ def detect_compiler_from_version_output(output):
     lines = output.splitlines()
 
     if 'g++' in lines[0]:
-        m = re.match('.*\([^)]*\)\s*([\d.-]+)(?:|\s.*)', lines[0])
+        m = re.match(r'.*\([^)]*\)\s*([\d.-]+)(?:|\s.*)', lines[0])
         if m:
             return ('gcc', m.group(1))
 
-    m = re.match('clang version ([\d.-]+)\s.*', lines[0])
+    m = re.match(r'clang version ([\d.-]+)\s.*', lines[0])
     if m:
         return ('clang', m.group(1))
 

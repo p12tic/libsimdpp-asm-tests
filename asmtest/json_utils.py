@@ -30,7 +30,7 @@ class NoIndent(object):
 class NoIndentJsonEncoder(json.JSONEncoder):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(NoIndentJsonEncoder, self).__init__(*args, **kwargs)
         self._kwargs = dict(kwargs)
         self._kwargs.pop('indent')
         self._replacement_list = []
@@ -53,12 +53,11 @@ class NoIndentJsonEncoder(json.JSONEncoder):
         if isinstance(o, NoIndent):
             key = self._add_replacement(json.dumps(o.value, **self._kwargs))
             return self._unique_json_id() + str(key)
-        else:
-            return super().default(o)
+        return super(NoIndentJsonEncoder, self).default(o)
 
     def iterencode(self, o, **kwargs):
-        id_pattern = '"{0}(\d+)"'.format(self._unique_json_id())
-        for chunk in super().iterencode(o, **kwargs):
+        id_pattern = r'"{0}(\d+)"'.format(self._unique_json_id())
+        for chunk in super(NoIndentJsonEncoder, self).iterencode(o, **kwargs):
             chunk = re.sub(id_pattern,
                            lambda m: self._handle_noindent_value(m), chunk)
             yield chunk
