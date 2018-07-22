@@ -83,3 +83,27 @@ def parse_insn_sets(insn_set_list):
         if insn_id in insn_set_list:
             insn_sets.append(insn_id_to_insn_set[insn_id])
     return InsnSetConfig(insn_sets)
+
+
+def merge_equivalent_insns(insns):
+    ''' This function merges the instruction counts of equivalent instructions.
+        In certain casse the compiler is free to pick several instructions and
+        happens to pick different ones in baseline and non-baseline case.
+        This may lead to negative instruction counts when baseline instruction
+        count is subtracted.
+    '''
+    groups = [
+        ['movapd', 'movaps', 'movdqa'],
+        ['movupd', 'movups', 'movdqu'],
+        ['vmovapd', 'vmovaps', 'vmovdqa'],
+        ['vmovupd', 'vmovups', 'vmovdqu'],
+    ]
+
+    for g in groups:
+        for i in g:
+            if i in insns.insns and insns.insns[i] > 0:
+                for j in g:
+                    if j != i and j in insns.insns and insns.insns[j] < 0:
+                        diff = min(insns.insns[i], -insns.insns[j])
+                        insns.insns[i] -= diff
+                        insns.insns[j] += diff

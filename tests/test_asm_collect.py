@@ -20,7 +20,9 @@ from __future__ import print_function
 import unittest
 
 from asmtest.asm_collect import get_output_location_for_settings
+from asmtest.asm_collect import merge_equivalent_insns
 from asmtest.asm_collect import parse_insn_sets
+from asmtest.asm_parser import InsnCount
 from asmtest.compiler import CompilerBase
 from asmtest.insn_set import InsnSet
 from asmtest.insn_set import InsnSetConfig
@@ -80,3 +82,36 @@ class TestParseInsnSets(unittest.TestCase):
 
         self.assertEqual(expected,
                          parse_insn_sets('HAS_FMA3,HAS_FMA4').insn_sets)
+
+
+class TestMergeEquivalentInsns(unittest.TestCase):
+
+    def test_no_eq(self):
+        count = InsnCount()
+        count.insns = {'movapd': 3}
+
+        merge_equivalent_insns(count)
+
+        expected = {'movapd': 3}
+
+        self.assertEqual(expected, count.insns)
+
+    def test_eq_same_group(self):
+        count = InsnCount()
+        count.insns = {'movapd': 3, 'movaps': -2}
+
+        merge_equivalent_insns(count)
+
+        expected = {'movapd': 1, 'movaps': 0}
+
+        self.assertEqual(expected, count.insns)
+
+    def test_eq_different_group(self):
+        count = InsnCount()
+        count.insns = {'movapd': 3, 'vmovapd': 2}
+
+        merge_equivalent_insns(count)
+
+        expected = {'movapd': 3, 'vmovapd': 2}
+
+        self.assertEqual(expected, count.insns)
