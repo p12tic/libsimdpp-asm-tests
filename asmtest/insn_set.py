@@ -17,6 +17,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
+
 class InsnSet:
     X86_SSE2 = 1
     X86_SSE3 = 2
@@ -40,14 +41,16 @@ class InsnSet:
     POWER_VSX_206 = 20
     POWER_VSX_207 = 21
 
+
 class InsnSetConfig:
+
     def __init__(self, insn_sets):
         self.insn_sets = insn_sets
         self.capabilities = []
 
     def defines(self):
         insn_set_to_predefined_macro = {
-            InsnSet.X86_SSE2 : "SIMDPP_ARCH_X86_SSE2",
+            InsnSet.X86_SSE2: "SIMDPP_ARCH_X86_SSE2",
             InsnSet.X86_SSE3: "SIMDPP_ARCH_X86_SSE3",
             InsnSet.X86_SSSE3: "SIMDPP_ARCH_X86_SSSE3",
             InsnSet.X86_SSE4_1: "SIMDPP_ARCH_X86_SSE4_1",
@@ -69,12 +72,12 @@ class InsnSetConfig:
             InsnSet.POWER_VSX_206: "SIMDPP_ARCH_POWER_VSX_206",
             InsnSet.POWER_VSX_207: "SIMDPP_ARCH_POWER_VSX_207",
         }
-        return [ insn_set_to_predefined_macro[insn_set]
-                 for insn_set in self.insn_sets ]
+        return [insn_set_to_predefined_macro[insn_set]
+                for insn_set in self.insn_sets]
 
     def short_ids(self):
         insn_sets_to_short_id = {
-            InsnSet.X86_SSE2 : "sse2",
+            InsnSet.X86_SSE2: "sse2",
             InsnSet.X86_SSE3: "sse3",
             InsnSet.X86_SSSE3: "ssse3",
             InsnSet.X86_SSE4_1: "sse4.1",
@@ -95,8 +98,8 @@ class InsnSetConfig:
             InsnSet.POWER_VSX_206: "vsx_206",
             InsnSet.POWER_VSX_207: "vsx_207",
         }
-        return [ insn_sets_to_short_id[insn_set]
-                 for insn_set in self.insn_sets ]
+        return [insn_sets_to_short_id[insn_set]
+                for insn_set in self.insn_sets]
 
     def has_cap(self, cap):
         if cap not in get_all_capabilities():
@@ -121,35 +124,37 @@ class InsnSetConfig:
     def has_float64(self):
         return self.has_cap('INT64_SIMD')
 
+
 def get_all_insn_set_configs():
     return [
-        InsnSetConfig([ InsnSet.X86_SSE2 ]),
-        InsnSetConfig([ InsnSet.X86_SSE3 ]),
-        InsnSetConfig([ InsnSet.X86_SSSE3 ]),
-        InsnSetConfig([ InsnSet.X86_SSE4_1 ]),
-        InsnSetConfig([ InsnSet.X86_AVX ]),
-        InsnSetConfig([ InsnSet.X86_AVX2 ]),
-        InsnSetConfig([ InsnSet.X86_FMA3 ]),
-        InsnSetConfig([ InsnSet.X86_FMA4 ]),
-        InsnSetConfig([ InsnSet.X86_XOP ]),
-        InsnSetConfig([ InsnSet.X86_AVX, InsnSet.X86_FMA3 ]),
-        InsnSetConfig([ InsnSet.X86_AVX, InsnSet.X86_FMA4 ]),
-        InsnSetConfig([ InsnSet.X86_AVX, InsnSet.X86_XOP ]),
-        InsnSetConfig([ InsnSet.X86_AVX512F ]),
-        InsnSetConfig([ InsnSet.X86_AVX512F, InsnSet.X86_FMA3 ]),
-        InsnSetConfig([ InsnSet.X86_AVX512F,
-                        InsnSet.X86_FMA3,
-                        InsnSet.X86_AVX512BW,
-                        InsnSet.X86_AVX512DQ,
-                        InsnSet.X86_AVX512VL ]),
-        InsnSetConfig([ InsnSet.ARM_NEON ]),
-        InsnSetConfig([ InsnSet.ARM_NEON_FLT_SP ]),
-        InsnSetConfig([ InsnSet.ARM64_NEON ]),
-        InsnSetConfig([ InsnSet.MIPS_MSA ]),
-        InsnSetConfig([ InsnSet.POWER_ALTIVEC ]),
-        InsnSetConfig([ InsnSet.POWER_VSX_206 ]),
-        InsnSetConfig([ InsnSet.POWER_VSX_207 ]),
+        InsnSetConfig([InsnSet.X86_SSE2]),
+        InsnSetConfig([InsnSet.X86_SSE3]),
+        InsnSetConfig([InsnSet.X86_SSSE3]),
+        InsnSetConfig([InsnSet.X86_SSE4_1]),
+        InsnSetConfig([InsnSet.X86_AVX]),
+        InsnSetConfig([InsnSet.X86_AVX2]),
+        InsnSetConfig([InsnSet.X86_FMA3]),
+        InsnSetConfig([InsnSet.X86_FMA4]),
+        InsnSetConfig([InsnSet.X86_XOP]),
+        InsnSetConfig([InsnSet.X86_AVX, InsnSet.X86_FMA3]),
+        InsnSetConfig([InsnSet.X86_AVX, InsnSet.X86_FMA4]),
+        InsnSetConfig([InsnSet.X86_AVX, InsnSet.X86_XOP]),
+        InsnSetConfig([InsnSet.X86_AVX512F]),
+        InsnSetConfig([InsnSet.X86_AVX512F, InsnSet.X86_FMA3]),
+        InsnSetConfig([InsnSet.X86_AVX512F,
+                       InsnSet.X86_FMA3,
+                       InsnSet.X86_AVX512BW,
+                       InsnSet.X86_AVX512DQ,
+                       InsnSet.X86_AVX512VL]),
+        InsnSetConfig([InsnSet.ARM_NEON]),
+        InsnSetConfig([InsnSet.ARM_NEON_FLT_SP]),
+        InsnSetConfig([InsnSet.ARM64_NEON]),
+        InsnSetConfig([InsnSet.MIPS_MSA]),
+        InsnSetConfig([InsnSet.POWER_ALTIVEC]),
+        InsnSetConfig([InsnSet.POWER_VSX_206]),
+        InsnSetConfig([InsnSet.POWER_VSX_207]),
     ]
+
 
 def get_all_capabilities():
     return [

@@ -22,10 +22,13 @@ import re
 
 
 class NoIndent(object):
+
     def __init__(self, value):
         self.value = value
 
+
 class NoIndentJsonEncoder(json.JSONEncoder):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._kwargs = dict(kwargs)

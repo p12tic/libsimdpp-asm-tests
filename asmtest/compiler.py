@@ -31,13 +31,16 @@ from asmtest.utils import call_program
 
 
 class CompilerInvocation:
+
     def __init__(self, insn_set, simdpp_path, src_path, dst_path):
         self.insn_set = insn_set
         self.simdpp_path = simdpp_path
         self.src_path = src_path
         self.dst_path = dst_path
 
+
 class CompilerBase:
+
     def __init__(self):
         self.name = None
         self.path = None
@@ -56,7 +59,9 @@ class CompilerBase:
                 return None
         return flags
 
+
 class CompilerGccBase(CompilerBase):
+
     def get_flags(self, invocation):
         return [
             '-c', invocation.src_path, '-o', invocation.dst_path,
@@ -67,56 +72,62 @@ class CompilerGccBase(CompilerBase):
             '-fno-stack-protector'
         ]
 
+
 class CompilerGcc(CompilerGccBase):
+
     def get_flags(self, invocation):
         flags = super().get_flags(invocation)
         insn_to_flags = (
-            ( InsnSet.X86_SSE2, [ '-msse2' ] ),
-            ( InsnSet.X86_SSE3, [ '-msse3' ] ),
-            ( InsnSet.X86_SSSE3, [ '-mssse3' ] ),
-            ( InsnSet.X86_POPCNT, [ '-mssse3', '-mpopcnt' ] ),
-            ( InsnSet.X86_SSE4_1, [ '-msse4.1' ] ),
-            ( InsnSet.X86_AVX, [ '-mavx' ] ),
-            ( InsnSet.X86_AVX2, [ '-mavx2' ] ),
-            ( InsnSet.X86_FMA3, [ '-mfma' ] ),
-            ( InsnSet.X86_FMA4, [ '-mfma4' ] ),
-            ( InsnSet.X86_XOP, [ '-mxop' ] ),
-            ( InsnSet.X86_AVX512F, [ '-mavx512f' ] ),
-            ( InsnSet.X86_AVX512BW, [ '-mavx512bw' ] ),
-            ( InsnSet.X86_AVX512DQ, [ '-mavx512dq' ] ),
-            ( InsnSet.X86_AVX512VL, [ '-mavx512vl' ] ),
-            ( InsnSet.ARM_NEON, [ '-mfpu=neon' ] ),
-            ( InsnSet.ARM_NEON_FLT_SP, [ '-mfpu=neon' ] ),
-            ( InsnSet.ARM64_NEON, [ '-mcpu=generic+simd' ] ),
-            ( InsnSet.MIPS_MSA, [ '-mips64r5', '-mmsa', '-mhard-float',
-                                  '-mfp64', '-mnan=legacy' ] ),
-            ( InsnSet.POWER_ALTIVEC, [ '-maltivec' ] ),
-            ( InsnSet.POWER_VSX_206, [ '-mvsx' ] ),
-            ( InsnSet.POWER_VSX_207, [ '-mvsx', '-mcpu=power8' ] ),
+            (InsnSet.X86_SSE2, ['-msse2']),
+            (InsnSet.X86_SSE3, ['-msse3']),
+            (InsnSet.X86_SSSE3, ['-mssse3']),
+            (InsnSet.X86_POPCNT, ['-mssse3', '-mpopcnt']),
+            (InsnSet.X86_SSE4_1, ['-msse4.1']),
+            (InsnSet.X86_AVX, ['-mavx']),
+            (InsnSet.X86_AVX2, ['-mavx2']),
+            (InsnSet.X86_FMA3, ['-mfma']),
+            (InsnSet.X86_FMA4, ['-mfma4']),
+            (InsnSet.X86_XOP, ['-mxop']),
+            (InsnSet.X86_AVX512F, ['-mavx512f']),
+            (InsnSet.X86_AVX512BW, ['-mavx512bw']),
+            (InsnSet.X86_AVX512DQ, ['-mavx512dq']),
+            (InsnSet.X86_AVX512VL, ['-mavx512vl']),
+            (InsnSet.ARM_NEON, ['-mfpu=neon']),
+            (InsnSet.ARM_NEON_FLT_SP, ['-mfpu=neon']),
+            (InsnSet.ARM64_NEON, ['-mcpu=generic+simd']),
+            (InsnSet.MIPS_MSA, ['-mips64r5', '-mmsa', '-mhard-float',
+                                '-mfp64', '-mnan=legacy']),
+            (InsnSet.POWER_ALTIVEC, ['-maltivec']),
+            (InsnSet.POWER_VSX_206, ['-mvsx']),
+            (InsnSet.POWER_VSX_207, ['-mvsx', '-mcpu=power8']),
         )
         return self.add_insn_set_flags(insn_to_flags, flags,
-                                   invocation.insn_set.insn_sets)
+                                       invocation.insn_set.insn_sets)
+
 
 class CompilerGccIntel(CompilerGccBase):
+
     def get_flags(self, invocation):
         flags = super().get_flags(invocation)
         insn_to_flags = (
-            ( InsnSet.X86_SSE2, [ '-msse2' ] ),
-            ( InsnSet.X86_SSE3, [ '-msse3' ] ),
-            ( InsnSet.X86_SSSE3, [ '-mssse3' ] ),
-            ( InsnSet.X86_POPCNT, [ '-mssse3', '-mpopcnt' ] ),
-            ( InsnSet.X86_SSE4_1, [ '-msse4.1' ] ),
-            ( InsnSet.X86_AVX, [ '-mavx' ] ),
-            ( InsnSet.X86_AVX2, [ '-xCORE-AVX2' ] ),
-            ( InsnSet.X86_FMA3, [ '-xCORE-AVX2' ] ),
-            ( InsnSet.X86_AVX512F, [ '-xCOMMON-AVX512' ] ),
-            ( InsnSet.X86_AVX512BW, [ '-xCORE-AVX512' ] ),
-            ( InsnSet.X86_AVX512VL, [ '-xCORE-AVX512' ] ),
+            (InsnSet.X86_SSE2, ['-msse2']),
+            (InsnSet.X86_SSE3, ['-msse3']),
+            (InsnSet.X86_SSSE3, ['-mssse3']),
+            (InsnSet.X86_POPCNT, ['-mssse3', '-mpopcnt']),
+            (InsnSet.X86_SSE4_1, ['-msse4.1']),
+            (InsnSet.X86_AVX, ['-mavx']),
+            (InsnSet.X86_AVX2, ['-xCORE-AVX2']),
+            (InsnSet.X86_FMA3, ['-xCORE-AVX2']),
+            (InsnSet.X86_AVX512F, ['-xCOMMON-AVX512']),
+            (InsnSet.X86_AVX512BW, ['-xCORE-AVX512']),
+            (InsnSet.X86_AVX512VL, ['-xCORE-AVX512']),
         )
         return self.add_insn_set_flags(insn_to_flags, flags,
-                                   invocation.insn_set.insn_sets)
+                                       invocation.insn_set.insn_sets)
+
 
 class CompilerMsvcBase(CompilerBase):
+
     def get_flags(self, invocation):
         return [
             '-c', invocation.src_path, '-o', invocation.dst_path,
@@ -127,43 +138,48 @@ class CompilerMsvcBase(CompilerBase):
             '/GS-'
         ]
 
+
 class CompilerMsvc(CompilerMsvcBase):
+
     def get_flags(self, invocation):
         flags = super().get_flags(invocation)
         insn_to_flags = (
-            ( InsnSet.X86_SSE2, [ '/arch:SSE2' ] ),
-            ( InsnSet.X86_SSE3, [ '/arch:SSE2' ] ),
-            ( InsnSet.X86_SSSE3, [ '/arch:SSE2' ] ),
-            ( InsnSet.X86_POPCNT, [ '/arch:SSE4.2' ] ),
-            ( InsnSet.X86_SSE4_1, [ '/arch:SSE2' ] ),
-            ( InsnSet.X86_AVX, [ '/arch:AVX' ] ),
-            ( InsnSet.X86_AVX2, [ '/arch:AVX' ] ),
-            ( InsnSet.X86_FMA3, [ '/arch:AVX' ] ),
-            ( InsnSet.X86_FMA4, [ '/arch:AVX' ] ),
+            (InsnSet.X86_SSE2, ['/arch:SSE2']),
+            (InsnSet.X86_SSE3, ['/arch:SSE2']),
+            (InsnSet.X86_SSSE3, ['/arch:SSE2']),
+            (InsnSet.X86_POPCNT, ['/arch:SSE4.2']),
+            (InsnSet.X86_SSE4_1, ['/arch:SSE2']),
+            (InsnSet.X86_AVX, ['/arch:AVX']),
+            (InsnSet.X86_AVX2, ['/arch:AVX']),
+            (InsnSet.X86_FMA3, ['/arch:AVX']),
+            (InsnSet.X86_FMA4, ['/arch:AVX']),
         )
         return self.add_insn_set_flags(insn_to_flags, flags,
-                                   invocation.insn_set.insn_sets)
+                                       invocation.insn_set.insn_sets)
+
 
 class CompilerMsvcIntel(CompilerMsvcBase):
+
     def get_flags(self, invocation):
         flags = super().get_flags(invocation)
         insn_to_flags = (
-            ( InsnSet.X86_SSE2, [ '/arch:SSE2' ] ),
-            ( InsnSet.X86_SSE3, [ '/arch:SSE3' ] ),
-            ( InsnSet.X86_SSSE3, [ '/arch:SSSE3' ] ),
-            ( InsnSet.X86_POPCNT, [ '/arch:SSE4.2' ] ),
-            ( InsnSet.X86_SSE4_1, [ '/arch:SSE4.1' ] ),
-            ( InsnSet.X86_AVX, [ '/arch:AVX' ] ),
-            ( InsnSet.X86_AVX2, [ '/arch:CORE-AVX2' ] ),
-            ( InsnSet.X86_FMA3, [ '/arch:CORE-AVX2' ] ),
-            ( InsnSet.X86_FMA4, [ '/arch:AVX' ] ),
-            ( InsnSet.X86_AVX512F, [ '/arch:COMMON-AVX512' ] ),
-            ( InsnSet.X86_AVX512BW, [ '/arch:CORE-AVX512' ] ),
-            ( InsnSet.X86_AVX512DQ, [ '/arch:CORE-AVX512' ] ),
-            ( InsnSet.X86_AVX512VL, [ '/arch:CORE-AVX512' ] ),
+            (InsnSet.X86_SSE2, ['/arch:SSE2']),
+            (InsnSet.X86_SSE3, ['/arch:SSE3']),
+            (InsnSet.X86_SSSE3, ['/arch:SSSE3']),
+            (InsnSet.X86_POPCNT, ['/arch:SSE4.2']),
+            (InsnSet.X86_SSE4_1, ['/arch:SSE4.1']),
+            (InsnSet.X86_AVX, ['/arch:AVX']),
+            (InsnSet.X86_AVX2, ['/arch:CORE-AVX2']),
+            (InsnSet.X86_FMA3, ['/arch:CORE-AVX2']),
+            (InsnSet.X86_FMA4, ['/arch:AVX']),
+            (InsnSet.X86_AVX512F, ['/arch:COMMON-AVX512']),
+            (InsnSet.X86_AVX512BW, ['/arch:CORE-AVX512']),
+            (InsnSet.X86_AVX512DQ, ['/arch:CORE-AVX512']),
+            (InsnSet.X86_AVX512VL, ['/arch:CORE-AVX512']),
         )
         return self.add_insn_set_flags(insn_to_flags, flags,
-                                   invocation.insn_set.insn_sets)
+                                       invocation.insn_set.insn_sets)
+
 
 def detect_compiler_from_version_output(output):
     lines = output.splitlines()
@@ -179,34 +195,37 @@ def detect_compiler_from_version_output(output):
 
     return (None, None)
 
+
 def get_target_arch(compiler_path, compiler_name):
-    if compiler_name in [ 'gcc', 'clang', 'gcc-intel' ]:
+    if compiler_name in ['gcc', 'clang', 'gcc-intel']:
         try:
-            out = call_program([ compiler_path, '-dumpmachine' ])
+            out = call_program([compiler_path, '-dumpmachine'])
             return out.split('-')[0]
         except:
             return None
     return None
 
+
 def create_compiler_by_name(name):
     cxx_name_to_compiler = {
-        'gcc' : CompilerGcc,
-        'clang' : CompilerGcc,
-        'gcc-intel' : CompilerGccIntel,
-        'msvc' : CompilerMsvc,
-        'msvc-intel' : CompilerMsvcIntel,
+        'gcc': CompilerGcc,
+        'clang': CompilerGcc,
+        'gcc-intel': CompilerGccIntel,
+        'msvc': CompilerMsvc,
+        'msvc-intel': CompilerMsvcIntel,
     }
     if name not in cxx_name_to_compiler:
         raise Exception('Unknown cxx_type {0}'.format(name))
     return cxx_name_to_compiler[name]()
 
+
 def detect_compiler(compiler_path):
     args_to_test = [
-        [ '--version' ],
+        ['--version'],
     ]
 
     for args in args_to_test:
-        out = call_program([ compiler_path ] + args, check_returncode=False)
+        out = call_program([compiler_path] + args, check_returncode=False)
         name, version = detect_compiler_from_version_output(out)
         if name is not None:
             target_arch = get_target_arch(compiler_path, name)
@@ -218,6 +237,7 @@ def detect_compiler(compiler_path):
             return compiler
 
     return None
+
 
 def compile_code_to_asm(libsimdpp_path, compiler, insn_set_config,
                         code, test_dir):
@@ -235,7 +255,7 @@ def compile_code_to_asm(libsimdpp_path, compiler, insn_set_config,
                                     src_path, dst_path)
 
     flags = compiler.get_flags(invocation)
-    cmd = [ compiler.path ] + flags
+    cmd = [compiler.path] + flags
 
     with open(command_path, 'w') as out_f:
         out_f.write(' '.join(cmd) + '\n')
@@ -245,9 +265,10 @@ def compile_code_to_asm(libsimdpp_path, compiler, insn_set_config,
     with open(asm_path, 'r') as in_f:
         return in_f.read()
 
+
 def parse_supported_capabilities(asm, capabilities):
     functions = parse_compiler_asm_output(asm)
-    function_names = [ f.name for f in functions ]
+    function_names = [f.name for f in functions]
 
     supported_capabilities = []
 
@@ -260,6 +281,7 @@ def parse_supported_capabilities(asm, capabilities):
             raise Exception('Unknown capability {0}'.format(cap))
     return supported_capabilities
 
+
 def detect_insn_set_support(libsimdpp_path, compiler, insn_set_config):
     with tempfile.TemporaryDirectory() as tmp_dir:
         caps = get_all_capabilities()
@@ -268,12 +290,13 @@ def detect_insn_set_support(libsimdpp_path, compiler, insn_set_config):
             # the following call will throw an exception if the compilation
             # fails. Unsupported instruction sets are disabled within
             # libsimdp source
-            asm = compile_code_to_asm(libsimdpp_path, compiler, insn_set_config,
-                                      code, tmp_dir)
+            asm = compile_code_to_asm(libsimdpp_path, compiler,
+                                      insn_set_config, code, tmp_dir)
         except:
             return False, []
 
         return True, parse_supported_capabilities(asm, caps)
+
 
 def detect_supported_insn_sets(libsimdpp_path, compiler):
     supported_configs = []
@@ -281,10 +304,10 @@ def detect_supported_insn_sets(libsimdpp_path, compiler):
 
     num_threads = multiprocessing.cpu_count() + 1
     with futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-        work_futures = [ ( config,
-                           executor.submit(detect_insn_set_support,
-                                           libsimdpp_path, compiler, config) )
-                         for config in all_configs ]
+        work_futures = [(config,
+                         executor.submit(detect_insn_set_support,
+                                         libsimdpp_path, compiler, config))
+                        for config in all_configs]
 
         for config, future in work_futures:
             is_supported, capabilities = future.result()

@@ -15,6 +15,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
+
 def get_code_for_file_header(insn_set_config):
     defines_lines = ""
     for define in insn_set_config.defines():
@@ -26,13 +27,16 @@ def get_code_for_file_header(insn_set_config):
 '''
     return template.format(defines_lines)
 
+
 def get_load_stmt_for_type(type, var, idx):
     return '    {0} {1} = *reinterpret_cast<const {0}*>(pa+B*{2});'.format(
-            type, var, idx)
+        type, var, idx)
+
 
 def get_store_stmt_for_type(type, var, idx):
     return '    *reinterpret_cast<{0}*>(pr+B*{2}) = {1};'.format(
-            type, var, idx)
+        type, var, idx)
+
 
 def get_code_for_single_test(test_desc, test_ident):
     template = '''\
@@ -92,6 +96,7 @@ const char* test_id_{1}_end(char* pr, const char* pa)
     code = '\n'.join(lines_load + lines_store + lines_code)
     return template.format(test_desc.bytes, test_ident, code)
 
+
 def get_code_for_single_capability(cap):
     return '''
 #ifdef SIMDPP_HAS_{0}
@@ -103,15 +108,17 @@ extern "C" void has_no_{0}_cap() {{}}
 #endif
 '''.format(cap)
 
+
 def get_code_for_tests(insn_set_config, tests):
-    parts = [ get_code_for_file_header(insn_set_config) ]
+    parts = [get_code_for_file_header(insn_set_config)]
     for test in tests:
         parts.append(get_code_for_single_test(test.desc, test.ident))
 
     return ''.join(parts)
 
+
 def get_code_for_testing_insn_set_support(insn_set_config, capabilities):
-    parts = [ get_code_for_file_header(insn_set_config) ]
+    parts = [get_code_for_file_header(insn_set_config)]
     for cap in capabilities:
         parts.append(get_code_for_single_capability(cap))
 

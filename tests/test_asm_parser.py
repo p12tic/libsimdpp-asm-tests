@@ -58,7 +58,7 @@ directive_at_line_begin
 function_name:
 '''
 
-        self.assertEqual([ AsmFunction('function_name') ],
+        self.assertEqual([AsmFunction('function_name')],
                          parse_compiler_asm_output(output))
 
     def test_empty_function(self):
@@ -122,17 +122,18 @@ function_name:
         ]
         self.assertEqual(expected, parse_compiler_asm_output(output))
 
+
 class TestInsnCountFromInsnList(unittest.TestCase):
 
     def test_empty(self):
         self.assertEqual({}, InsnCount.from_insn_list([]).insns)
 
     def test_single(self):
-        insns = [ '1' ]
-        expected = { '1' : 1 }
+        insns = ['1']
+        expected = {'1': 1}
         self.assertEqual(expected, InsnCount.from_insn_list(insns).insns)
 
     def test_duplicates(self):
-        insns = [ '1', '2', '1' ]
-        expected = { '1' : 2, '2' : 1 }
+        insns = ['1', '2', '1']
+        expected = {'1': 2, '2': 1}
         self.assertEqual(expected, InsnCount.from_insn_list(insns).insns)

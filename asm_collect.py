@@ -51,10 +51,10 @@ def merge_equivalent_insns(insns):
         count is subtracted.
     '''
     groups = [
-        ['movapd', 'movaps', 'movdqa' ],
-        ['movupd', 'movups', 'movdqu' ],
-        ['vmovapd', 'vmovaps', 'vmovdqa' ],
-        ['vmovupd', 'vmovups', 'vmovdqu' ],
+        ['movapd', 'movaps', 'movdqa'],
+        ['movupd', 'movups', 'movdqu'],
+        ['vmovapd', 'vmovaps', 'vmovdqa'],
+        ['vmovupd', 'vmovups', 'vmovdqu'],
     ]
 
     for g in groups:
@@ -65,6 +65,7 @@ def merge_equivalent_insns(insns):
                         diff = min(insns.insns[i], -insns.insns[j])
                         insns.insns[i] -= diff
                         insns.insns[j] += diff
+
 
 def generate_test_list(category_to_tests, categories):
     ret = {}
@@ -92,6 +93,7 @@ def generate_test_list(category_to_tests, categories):
         ret[category] = test_list
     return ret
 
+
 def get_name_to_insn_set_map():
     return {
         'HAS_SSE2':     InsnSet.X86_SSE2,
@@ -111,6 +113,7 @@ def get_name_to_insn_set_map():
         'HAS_NEON':     InsnSet.ARM_NEON,
     }
 
+
 def parse_insn_sets(insn_set_list):
     insn_id_to_insn_set = get_name_to_insn_set_map()
     insn_sets = []
@@ -118,6 +121,7 @@ def parse_insn_sets(insn_set_list):
         if insn_id in insn_set_list:
             insn_sets.append(insn_id_to_insn_set[insn_id])
     return InsnSetConfig(insn_sets)
+
 
 def parse_test_insns(asm_output, test_list, baseline_test_list):
     # The result is stored to the insns member of each object in test_list
@@ -132,13 +136,14 @@ def parse_test_insns(asm_output, test_list, baseline_test_list):
                 break
         if found_function is None:
             raise Exception('Could not find ident {0}'.format(
-                    test.ident))
+                test.ident))
         test.insns = InsnCount.from_insn_list(found_function.insns)
 
     # subtract baseline
     for i in range(0, len(test_list)):
         test_list[i].insns.sub(baseline_test_list[i].insns)
         merge_equivalent_insns(test_list[i].insns)
+
 
 def perform_single_compilation(libsimdpp_path, test_dir, compiler,
                                insn_set_config, tests_chunk):
@@ -164,9 +169,11 @@ def perform_single_compilation(libsimdpp_path, test_dir, compiler,
 
     shutil.rmtree(curr_test_dir)
 
+
 def test_sort_key(test):
     return (test.desc.code, test.desc.bytes, test.desc.rtype,
             test.desc.atype, test.desc.btype, test.desc.ctype)
+
 
 def write_results(test_list, file):
     ''' We want json output to be compact, but readable at the same time.
@@ -176,14 +183,14 @@ def write_results(test_list, file):
     json_data = []
     for group in group_tests_by_code(test_list):
         if len(group) > 1:
-            json_group_tests = [ test.to_json()
-                                 for test in sorted(group, key=test_sort_key) ]
+            json_group_tests = [test.to_json()
+                                for test in sorted(group, key=test_sort_key)]
             for json_test in json_group_tests:
                 json_test.pop('code')
             json_group = {
-                'code' : group[0].desc.code,
-                'tests' : [ NoIndent(json_test)
-                            for json_test in json_group_tests ],
+                'code': group[0].desc.code,
+                'tests': [NoIndent(json_test)
+                          for json_test in json_group_tests],
             }
             json_data.append(json_group)
         else:
@@ -192,15 +199,18 @@ def write_results(test_list, file):
     json.dump(json_data, file, sort_keys=True, indent=2,
               cls=NoIndentJsonEncoder)
 
+
 def split_test_list_into_chunks(test_list, tests_per_file):
     for x in range(0, len(test_list), tests_per_file):
-        yield test_list[x : x+tests_per_file]
+        yield test_list[x: x + tests_per_file]
+
 
 def flatten_tests_by_cat(tests_by_cat):
     ret = []
     for cat in sorted(tests_by_cat.keys()):
         ret += tests_by_cat[cat]
     return ret
+
 
 def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
                       tests_per_file):
@@ -226,11 +236,11 @@ def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
                                                            tests_per_file):
                 processed_pos += len(tests_chunk)
                 work_futures += [
-                    ( processed_pos,
-                      executor.submit(perform_single_compilation,
-                                      libsimdpp_path,
-                                      tmp_dir, compiler, config, tests_chunk)
-                    )
+                    (processed_pos,
+                     executor.submit(perform_single_compilation,
+                                     libsimdpp_path,
+                                     tmp_dir, compiler, config, tests_chunk)
+                     )
                 ]
 
         total_test_count = processed_pos
@@ -273,11 +283,12 @@ def get_output_location_for_settings(compiler, insn_set_config, category):
 
     short_ids = insn_set_config.short_ids()
     if len(short_ids) == 0:
-        short_ids = [ 'none' ]
+        short_ids = ['none']
 
     return os.path.join('{0}_{1}'.format(compiler.name, compiler_version),
-                        '_'.join([ category, compiler.target_arch ] +
+                        '_'.join([category, compiler.target_arch] +
                                  short_ids) + '.json')
+
 
 def write_results_to_files(output_root, compiler, test_and_config_list):
     for config, tests_by_cat in test_and_config_list:
@@ -291,27 +302,33 @@ def write_results_to_files(output_root, compiler, test_and_config_list):
             with open(out_path, 'w') as out_f:
                 write_results(test_list, out_f)
 
+
 def main():
     parser = argparse.ArgumentParser(prog='asm_collect')
-    parser.add_argument('cxx', type=str,
-            help='Path to the compiler')
-    parser.add_argument('libsimdpp', type=str,
-            help='Path to the libsimdpp library')
-    parser.add_argument('--instr_sets', type=str, default=None,
-            help='Instruction sets to test. If not specified, attempts to '+
-                'detect supported instruction sets and tests them all. ' +
-                'Allowed values: {0}'.format(
-                ', '.join(get_name_to_insn_set_map().keys())))
-    parser.add_argument('--categories', type=str, default=None,
-            help='Comma-separated list of test categories to generate ' +
-                'results for.')
-    parser.add_argument('--tests_per_file', type=int, default=1000,
-            help='The number of tests per single compiled file')
-    parser.add_argument('--output_root', type=str, default=None,
-            help='If this option is given, saves the output to the following '+
-                'location: <output_root>/<compiler_id>/'+
-                '<category>_<arch>_<enabled_insn_sets>.json. '+
-                'Missing directories are created if needed.')
+    parser.add_argument(
+        'cxx', type=str,
+        help='Path to the compiler')
+    parser.add_argument(
+        'libsimdpp', type=str,
+        help='Path to the libsimdpp library')
+    parser.add_argument(
+        '--instr_sets', type=str, default=None,
+        help='Instruction sets to test. If not specified, attempts to ' +
+        'detect supported instruction sets and tests them all. ' +
+        'Allowed values: {0}'.format(
+            ', '.join(get_name_to_insn_set_map().keys())))
+    parser.add_argument(
+        '--categories', type=str, default=None,
+        help='Comma-separated list of test categories to generate results for.')
+    parser.add_argument(
+        '--tests_per_file', type=int, default=1000,
+        help='The number of tests per single compiled file')
+    parser.add_argument(
+        '--output_root', type=str, default=None,
+        help='If this option is given, saves the output to the following ' +
+        'location: <output_root>/<compiler_id>/' +
+        '<category>_<arch>_<enabled_insn_sets>.json. ' +
+        'Missing directories are created if needed.')
     args = parser.parse_args()
 
     compiler = detect_compiler(args.cxx)
@@ -320,7 +337,7 @@ def main():
         sys.exit(1)
 
     if args.instr_sets is not None:
-        insn_set_configs = [ parse_insn_sets(args.instr_sets) ]
+        insn_set_configs = [parse_insn_sets(args.instr_sets)]
     else:
         if args.output_root is None:
             print('Please set --output_root to test all instruction sets')
@@ -329,18 +346,18 @@ def main():
 
         print('Supported instruction sets:')
         for config in insn_set_configs:
-            lines = [ ','.join(config.short_ids()) + ':' ]
-            lines += [ ('    ' + cap) for cap in config.capabilities ]
+            lines = [','.join(config.short_ids()) + ':']
+            lines += [('    ' + cap) for cap in config.capabilities]
             print('\n'.join(lines))
 
     categories = None
     if args.categories is not None:
         categories = args.categories.split(',')
 
-    test_and_config_list = [ ( config,
-                               generate_test_list(get_all_tests(config),
-                                                  categories)
-                             )  for config in insn_set_configs ]
+    test_and_config_list = [(config,
+                             generate_test_list(get_all_tests(config),
+                                                categories)
+                             ) for config in insn_set_configs]
 
     perform_all_tests(args.libsimdpp, compiler, test_and_config_list,
                       args.tests_per_file)

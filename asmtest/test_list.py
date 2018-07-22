@@ -19,6 +19,12 @@ from asmtest.test_desc import CodeCombinator
 from asmtest.test_desc import TestGenerator
 
 
+def empty_if_false(cond, list):
+    if cond:
+        return list
+    return []
+
+
 def get_all_tests(config):
     # Returns a dict with test categories as keys and list of tests or test
     # generators as values
@@ -47,44 +53,44 @@ def get_all_tests(config):
     mf32 = 'mask_float32<B/4>'
     mf64 = 'mask_float64<B/8>'
 
-    i8_2 =   [ (i8,   i8)   ] if config.has_int8() else []
-    u8_2 =   [ (u8,   u8)   ] if config.has_int8() else []
-    mi8_2 =  [ (mi8,  mi8)  ] if config.has_int8() else []
-    i16_2 =  [ (i16,  i16)  ] if config.has_int16() else []
-    u16_2 =  [ (u16,  u16)  ] if config.has_int16() else []
-    mi16_2 = [ (mi16, mi16) ] if config.has_int16() else []
-    i32_2 =  [ (i32,  i32)  ] if config.has_int32() else []
-    u32_2 =  [ (u32,  u32)  ] if config.has_int32() else []
-    mi32_2 = [ (mi32, mi32) ] if config.has_int32() else []
-    i64_2 =  [ (i64,  i64)  ] if config.has_int64() else []
-    u64_2 =  [ (u64,  u64)  ] if config.has_int64() else []
-    mi64_2 = [ (mi64, mi64) ] if config.has_int64() else []
-    f32_2 =  [ (f32,  f32)  ] if config.has_float32() else []
-    mf32_2 = [ (mf32, mf32) ] if config.has_float32() else []
-    f64_2 =  [ (f64,  f64)  ] if config.has_float64() else []
-    mf64_2 = [ (mf64, mf64) ] if config.has_float64() else []
+    i8_2 = [(i8,   i8)] if config.has_int8() else []
+    u8_2 = [(u8,   u8)] if config.has_int8() else []
+    mi8_2 = [(mi8,  mi8)] if config.has_int8() else []
+    i16_2 = [(i16,  i16)] if config.has_int16() else []
+    u16_2 = [(u16,  u16)] if config.has_int16() else []
+    mi16_2 = [(mi16, mi16)] if config.has_int16() else []
+    i32_2 = [(i32,  i32)] if config.has_int32() else []
+    u32_2 = [(u32,  u32)] if config.has_int32() else []
+    mi32_2 = [(mi32, mi32)] if config.has_int32() else []
+    i64_2 = [(i64,  i64)] if config.has_int64() else []
+    u64_2 = [(u64,  u64)] if config.has_int64() else []
+    mi64_2 = [(mi64, mi64)] if config.has_int64() else []
+    f32_2 = [(f32,  f32)] if config.has_float32() else []
+    mf32_2 = [(mf32, mf32)] if config.has_float32() else []
+    f64_2 = [(f64,  f64)] if config.has_float64() else []
+    mf64_2 = [(mf64, mf64)] if config.has_float64() else []
 
     int_2 = i8_2 + i16_2 + i32_2 + i64_2
     uint_2 = u8_2 + u16_2 + u32_2 + u64_2
     float_2 = f32_2 + f64_2
     mask_2 = mi8_2 + mi16_2 + mi32_2 + mi64_2 + mf32_2 + mf64_2
 
-    i8_3 =   [ (i8,   i8,   i8)   ] if config.has_int8() else []
-    u8_3 =   [ (u8,   u8,   u8)   ] if config.has_int8() else []
-    mi8_3 =  [ (mi8,  mi8,  mi8)  ] if config.has_int8() else []
-    i16_3 =  [ (i16,  i16,  i16)  ] if config.has_int16() else []
-    u16_3 =  [ (u16,  u16,  u16)  ] if config.has_int16() else []
-    mi16_3 = [ (mi16, mi16, mi16) ] if config.has_int16() else []
-    i32_3 =  [ (i32,  i32,  i32)  ] if config.has_int32() else []
-    u32_3 =  [ (u32,  u32,  u32)  ] if config.has_int32() else []
-    mi32_3 = [ (mi32, mi32, mi32) ] if config.has_int32() else []
-    i64_3 =  [ (i64,  i64,  i64)  ] if config.has_int64() else []
-    u64_3 =  [ (u64,  u64,  u64)  ] if config.has_int64() else []
-    mi64_3 = [ (mi64, mi64, mi64) ] if config.has_int64() else []
-    f32_3 =  [ (f32,  f32,  f32)  ] if config.has_float32() else []
-    mf32_3 = [ (mf32, mf32, mf32) ] if config.has_float32() else []
-    f64_3 =  [ (f64,  f64,  f64)  ] if config.has_float64() else []
-    mf64_3 = [ (mf64, mf64, mf64) ] if config.has_float64() else []
+    i8_3 = [(i8,   i8,   i8)] if config.has_int8() else []
+    u8_3 = [(u8,   u8,   u8)] if config.has_int8() else []
+    mi8_3 = [(mi8,  mi8,  mi8)] if config.has_int8() else []
+    i16_3 = [(i16,  i16,  i16)] if config.has_int16() else []
+    u16_3 = [(u16,  u16,  u16)] if config.has_int16() else []
+    mi16_3 = [(mi16, mi16, mi16)] if config.has_int16() else []
+    i32_3 = [(i32,  i32,  i32)] if config.has_int32() else []
+    u32_3 = [(u32,  u32,  u32)] if config.has_int32() else []
+    mi32_3 = [(mi32, mi32, mi32)] if config.has_int32() else []
+    i64_3 = [(i64,  i64,  i64)] if config.has_int64() else []
+    u64_3 = [(u64,  u64,  u64)] if config.has_int64() else []
+    mi64_3 = [(mi64, mi64, mi64)] if config.has_int64() else []
+    f32_3 = [(f32,  f32,  f32)] if config.has_float32() else []
+    mf32_3 = [(mf32, mf32, mf32)] if config.has_float32() else []
+    f64_3 = [(f64,  f64,  f64)] if config.has_float64() else []
+    mf64_3 = [(mf64, mf64, mf64)] if config.has_float64() else []
 
     int_3 = i8_3 + i16_3 + i32_3 + i64_3
     uint_3 = u8_3 + u16_3 + u32_3 + u64_3
@@ -104,29 +110,29 @@ def get_all_tests(config):
     ]
 
     # 2xB wide vectors
-    i8_x2 = 'int8<B*2>' # noqa: F841
+    i8_x2 = 'int8<B*2>'  # noqa: F841
     i16_x2 = 'int16<B>'
-    i32_x2 = 'int32<B/2>' # noqa: F841
-    i64_x2 = 'int64<B/4>' # noqa: F841
-    u8_x2 = 'uint8<B*2>' # noqa: F841
+    i32_x2 = 'int32<B/2>'  # noqa: F841
+    i64_x2 = 'int64<B/4>'  # noqa: F841
+    u8_x2 = 'uint8<B*2>'  # noqa: F841
     u16_x2 = 'uint16<B>'
-    u32_x2 = 'uint32<B/2>' # noqa: F841
-    u64_x2 = 'uint64<B/4>' # noqa: F841
-    f32_x2 = 'float32<B/2>' # noqa: F841
-    f64_x2 = 'float64<B/4>' # noqa: F841
+    u32_x2 = 'uint32<B/2>'  # noqa: F841
+    u64_x2 = 'uint64<B/4>'  # noqa: F841
+    f32_x2 = 'float32<B/2>'  # noqa: F841
+    f64_x2 = 'float64<B/4>'  # noqa: F841
 
-    mi8_x2 = 'mask_int8<B*2>' # noqa: F841
-    mi16_x2 = 'mask_int16<B>' # noqa: F841
-    mi32_x2 = 'mask_int32<B/2>' # noqa: F841
-    mi64_x2 = 'mask_int64<B/4>' # noqa: F841
-    mf32_x2 = 'mask_float32<B/2>' # noqa: F841
-    mf64_x2 = 'mask_float64<B/4>' # noqa: F841
+    mi8_x2 = 'mask_int8<B*2>'  # noqa: F841
+    mi16_x2 = 'mask_int16<B>'  # noqa: F841
+    mi32_x2 = 'mask_int32<B/2>'  # noqa: F841
+    mi64_x2 = 'mask_int64<B/4>'  # noqa: F841
+    mf32_x2 = 'mask_float32<B/2>'  # noqa: F841
+    mf64_x2 = 'mask_float64<B/4>'  # noqa: F841
 
     # 4xB wide vectors
-    i8_x4 = 'int8<B*4>' # noqa: F841
-    i16_x4 = 'int16<B*2>' # noqa: F841
+    i8_x4 = 'int8<B*4>'  # noqa: F841
+    i16_x4 = 'int16<B*2>'  # noqa: F841
     i32_x4 = 'int32<B>'
-    i64_x4 = 'int64<B/2>' # noqa: F841
+    i64_x4 = 'int64<B/2>'  # noqa: F841
     u8_x4 = 'uint8<B*4>'  # noqa: F841
     u16_x4 = 'uint16<B*2>'  # noqa: F841
     u32_x4 = 'uint32<B>'
@@ -174,27 +180,31 @@ def get_all_tests(config):
             ret[category] += tests
 
     bitwise_types = uint_3 + float_3 + mask_3 + [
-        [ ( u8, u8, mi8 ) ] if config.has_int8() else [],
-        [ ( u16, u16, mi16 ) ] if config.has_int16() else [],
-        [ ( u32, u32, mi32 ) ] if config.has_int32() else [],
-        [ ( u64, u64, mi64 ) ] if config.has_int64() else [],
-        [ ( f32, f32, mf32 ) ] if config.has_float32() else [],
-        [ ( f64, f64, mf64 ) ] if config.has_float64() else [],
+        [(u8, u8, mi8)] if config.has_int8() else [],
+        [(u16, u16, mi16)] if config.has_int16() else [],
+        [(u32, u32, mi32)] if config.has_int32() else [],
+        [(u64, u64, mi64)] if config.has_int64() else [],
+        [(f32, f32, mf32)] if config.has_float32() else [],
+        [(f64, f64, mf64)] if config.has_float64() else [],
     ]
 
     # bitwise_sc_constant_types = uint_2 + float_2 + mask_2
     bitwise_sc_value_types = uint_3_sc + [
-        [ ( f32, f32, 'uint32_t' ) ] if config.has_int32() else [],
-        [ ( f64, f64, 'uint64_t' ) ] if config.has_int64() else [],
+        [(f32, f32, 'uint32_t')] if config.has_int32() else [],
+        [(f64, f64, 'uint64_t')] if config.has_int64() else [],
     ]
 
     add('bitwise', [
-        TG('vr = bit_and(va, vb);', b, bitwise_types + bitwise_sc_value_types),
+        TG('vr = bit_and(va, vb);', b,
+           bitwise_types + bitwise_sc_value_types),
         TG('vr = bit_andnot(va, vb);', b,
-            bitwise_types + bitwise_sc_value_types),
-        TG('vr = bit_or(va, vb);', b, bitwise_types + bitwise_sc_value_types),
-        TG('vr = bit_xor(va, vb);', b, bitwise_types + bitwise_sc_value_types),
-        TG('vr = bit_not(va);', b, [ uint_2, float_2, mask_2 ]),
+           bitwise_types + bitwise_sc_value_types),
+        TG('vr = bit_or(va, vb);', b,
+           bitwise_types + bitwise_sc_value_types),
+        TG('vr = bit_xor(va, vb);', b,
+           bitwise_types + bitwise_sc_value_types),
+        TG('vr = bit_not(va);', b,
+           [uint_2, float_2, mask_2]),
     ])
 
     add('math', [
@@ -224,68 +234,80 @@ def get_all_tests(config):
     ])
 
     cmp_types = [
-        [ ( mi8, i8, i8 ) ] if config.has_int8() else [],
+        [(mi8, i8, i8)] if config.has_int8() else [],
         #( mi8, mi8, i8 ),
         #( mi8, mi8, mi8 ),
-        [ ( mi16, i16, i16 ) ] if config.has_int16() else [],
+        [(mi16, i16, i16)] if config.has_int16() else [],
         #( mi16, mi16, i16 ),
         #( mi16, mi16, mi16 ),
-        [ ( mi32, i32, i32 ) ] if config.has_int32() else [],
+        [(mi32, i32, i32)] if config.has_int32() else [],
         #( mi32, mi32, i32 ),
         #( mi32, mi32, mi32 ),
-        [ ( mi64, i64, i64 ) ] if config.has_int64() else [],
+        [(mi64, i64, i64)] if config.has_int64() else [],
         #( mi64, mi64, i64 ),
         #( mi64, mi64, mi64 ),
-        [ ( mf32, f32, f32 ) ] if config.has_float32() else [],
+        [(mf32, f32, f32)] if config.has_float32() else [],
         #( mf32, mf32, f32 ),
         #( mf32, mf32, mf32 ),
-        [ ( mf64, f64, f64 ) ] if config.has_float64() else [],
+        [(mf64, f64, f64)] if config.has_float64() else [],
         #( mf64, mf64, f64 ),
         #( mf64, mf64, mf64 ),
     ]
 
     shift_scalar_types = [
-        [ ( i8, i8, 'unsigned' ),
-          ( u8, u8, 'unsigned' ) ] if config.has_int8() else [],
-        [ ( i16, i16, 'unsigned' ),
-          ( u16, u16, 'unsigned' ) ] if config.has_int16() else [],
-        [ ( i32, i32, 'unsigned' ),
-          ( u32, u32, 'unsigned' ) ] if config.has_int32() else [],
-        [ ( i64, i64, 'unsigned' ),
-          ( u64, u64, 'unsigned' ) ] if config.has_int64() else [],
+        [(i8, i8, 'unsigned'),
+         (u8, u8, 'unsigned')] if config.has_int8() else [],
+        [(i16, i16, 'unsigned'),
+         (u16, u16, 'unsigned')] if config.has_int16() else [],
+        [(i32, i32, 'unsigned'),
+         (u32, u32, 'unsigned')] if config.has_int32() else [],
+        [(i64, i64, 'unsigned'),
+         (u64, u64, 'unsigned')] if config.has_int64() else [],
     ]
 
     shift_l_vector_types = [
-        [ ( i8, i8, u8 ) ] if config.has_cap('INT8_SHIFT_L_BY_VECTOR') else [],
-        [ ( u8, u8, u8 ) ] if config.has_cap('UINT8_SHIFT_L_BY_VECTOR') else [],
-        [ ( i16, i16, u16 ) ] if config.has_cap('INT16_SHIFT_L_BY_VECTOR') else [],
-        [ ( u16, u16, u16 ) ] if config.has_cap('UINT16_SHIFT_L_BY_VECTOR') else [],
-        [ ( i32, i32, u32 ) ] if config.has_cap('INT32_SHIFT_L_BY_VECTOR') else [],
-        [ ( u32, u32, u32 ) ] if config.has_cap('UINT32_SHIFT_L_BY_VECTOR') else [],
+        [(i8, i8, u8)] if config.has_cap(
+            'INT8_SHIFT_L_BY_VECTOR') else [],
+        [(u8, u8, u8)] if config.has_cap(
+            'UINT8_SHIFT_L_BY_VECTOR') else [],
+        [(i16, i16, u16)] if config.has_cap(
+            'INT16_SHIFT_L_BY_VECTOR') else [],
+        [(u16, u16, u16)] if config.has_cap(
+            'UINT16_SHIFT_L_BY_VECTOR') else [],
+        [(i32, i32, u32)] if config.has_cap(
+            'INT32_SHIFT_L_BY_VECTOR') else [],
+        [(u32, u32, u32)] if config.has_cap(
+            'UINT32_SHIFT_L_BY_VECTOR') else [],
     ]
 
     shift_r_vector_types = [
-        [ ( i8, i8, u8 ) ] if config.has_cap('INT8_SHIFT_R_BY_VECTOR') else [],
-        [ ( u8, u8, u8 ) ] if config.has_cap('UINT8_SHIFT_R_BY_VECTOR') else [],
-        [ ( i16, i16, u16 ) ] if config.has_cap('INT16_SHIFT_R_BY_VECTOR') else [],
-        [ ( u16, u16, u16 ) ] if config.has_cap('UINT16_SHIFT_R_BY_VECTOR') else [],
-        [ ( i32, i32, u32 ) ] if config.has_cap('INT32_SHIFT_R_BY_VECTOR') else [],
-        [ ( u32, u32, u32 ) ] if config.has_cap('UINT32_SHIFT_R_BY_VECTOR') else [],
+        [(i8, i8, u8)] if config.has_cap(
+            'INT8_SHIFT_R_BY_VECTOR') else [],
+        [(u8, u8, u8)] if config.has_cap(
+            'UINT8_SHIFT_R_BY_VECTOR') else [],
+        [(i16, i16, u16)] if config.has_cap(
+            'INT16_SHIFT_R_BY_VECTOR') else [],
+        [(u16, u16, u16)] if config.has_cap(
+            'UINT16_SHIFT_R_BY_VECTOR') else [],
+        [(i32, i32, u32)] if config.has_cap(
+            'INT32_SHIFT_R_BY_VECTOR') else [],
+        [(u32, u32, u32)] if config.has_cap(
+            'UINT32_SHIFT_R_BY_VECTOR') else [],
     ]
 
     reduce_int_types = [
-        [ ( 'int8_t',  i8 ),
-          ( 'uint8_t', u8 ) ] if config.has_int8() else [],
-        [ ( 'int16_t',  i16 ),
-          ( 'uint16_t', u16 ) ] if config.has_int16() else [],
-        [ ( 'int32_t',  i32 ),
-          ( 'uint32_t', u32 ) ] if config.has_int32() else [],
-        [ ( 'int64_t',  i64 ),
-          ( 'uint64_t', u64 ) ] if config.has_int64() else [],
+        [('int8_t',  i8),
+         ('uint8_t', u8)] if config.has_int8() else [],
+        [('int16_t',  i16),
+         ('uint16_t', u16)] if config.has_int16() else [],
+        [('int32_t',  i32),
+         ('uint32_t', u32)] if config.has_int32() else [],
+        [('int64_t',  i64),
+         ('uint64_t', u64)] if config.has_int64() else [],
     ]
     reduce_float_types = [
-        ( 'float', f32 ),
-        ( 'double', f64 ),
+        ('float', f32),
+        ('double', f64),
     ]
 
     add('math', [
@@ -303,29 +325,31 @@ def get_all_tests(config):
         TG('vr = va >= vb;', b, cmp_types),
 
         TG('vr = avg(va, vb);', b,
-            [ u8_3, i8_3, u16_3, i16_3, u32_3, i32_3 ]),
+            [u8_3, i8_3, u16_3, i16_3, u32_3, i32_3]),
         TG('vr = avg_trunc(va, vb);', b,
-            [ u8_3, i8_3, u16_3, i16_3, u32_3, i32_3 ]),
+            [u8_3, i8_3, u16_3, i16_3, u32_3, i32_3]),
 
         TG('vr = abs(va);', b,
-            [ [ (u8, i8) ] if config.has_int8() else [],
-              [ (u16, i16) ] if config.has_int16() else [],
-              [ (u32, i32) ] if config.has_int32() else [],
-              [ (u64, i64) ] if config.has_int64() else [] ] + float_2),
+            [[(u8, i8)] if config.has_int8() else [],
+             [(u16, i16)] if config.has_int16() else [],
+             [(u32, i32)] if config.has_int32() else [],
+             [(u64, i64)] if config.has_int64() else []] + float_2),
 
         TG('vr = sign(va);', b, float_2),
 
-        TG('vr = min(va, vb);', b, int_3 + uint_3 + float_3), # TODO: min might not be supported until AVX2
-        TG('vr = max(va, vb);', b, int_3 + uint_3 + float_3), # TODO: max might not be supported
+        TG('vr = min(va, vb);', b, int_3 + uint_3 + float_3),
+           # TODO: min might not be supported until AVX2
+        TG('vr = max(va, vb);', b, int_3 + uint_3 + float_3),
+           # TODO: max might not be supported
 
         TG('vr = isnan(va);', b, float_2),
         TG('vr = isnan2(va, vb);', b, float_3),
 
         TG('vr = sqrt(va);', b, float_2),
-        TG('vr = rcp_e(va);', b, [ f32_2 ]),
-        TG('vr = rcp_rh(va, vb);', b, [ f32_3 ]),
-        TG('vr = rsqrt_e(va);', b, [ f32_2 ]),
-        TG('vr = rsqrt_rh(va, vb);', b, [ f32_3 ]),
+        TG('vr = rcp_e(va);', b, [f32_2]),
+        TG('vr = rcp_rh(va, vb);', b, [f32_3]),
+        TG('vr = rsqrt_e(va);', b, [f32_2]),
+        TG('vr = rsqrt_rh(va, vb);', b, [f32_3]),
     ])
 
     add('math', [
@@ -344,191 +368,191 @@ def get_all_tests(config):
         TG('vr = reduce_min(va);', b, reduce_int_types + reduce_float_types),
         TG('vr = reduce_max(va);', b, reduce_int_types + reduce_float_types),
         TG('vr = reduce_add(va);', b, reduce_float_types + [
-            [ ( 'int16_t', i8 ),
-              ( 'uint16_t', u8 ) ] if config.has_int8() else [],
-            [ ( 'int32_t', i16 ),
-              ( 'uint32_t', u16 ) ] if config.has_int16() else [],
-            [ ( 'int32_t', i32 ),
-              ( 'uint32_t', u32 ) ] if config.has_int32() else [],
-            [ ( 'int64_t', i64 ),
-              ( 'uint64_t', u64 ) ] if config.has_int64() else [],
+            [('int16_t', i8),
+             ('uint16_t', u8)] if config.has_int8() else [],
+            [('int32_t', i16),
+             ('uint32_t', u16)] if config.has_int16() else [],
+            [('int32_t', i32),
+             ('uint32_t', u32)] if config.has_int32() else [],
+            [('int64_t', i64),
+             ('uint64_t', u64)] if config.has_int64() else [],
         ]),
-        TG('vr = reduce_mul(va);', b, reduce_float_types +[
-            [ ( 'int32_t', i16 ),
-              ( 'uint32_t', u16 ) ] if config.has_int16() else [],
-            [ ( 'int32_t', i32 ),
-              ( 'uint32_t', u32 ) ] if config.has_int32() else [],
+        TG('vr = reduce_mul(va);', b, reduce_float_types + [
+            [('int32_t', i16),
+             ('uint32_t', u16)] if config.has_int16() else [],
+            [('int32_t', i32),
+             ('uint32_t', u32)] if config.has_int32() else [],
         ]),
     ])
 
     def create_cvt_types(target_type):
         ret = [
-            ( target_type, i8 ),
-            ( target_type, u8 ),
-            ( target_type, i16_x2 ),
-            ( target_type, u16_x2 ),
-            ( target_type, i32_x4 ),
-            ( target_type, u32_x4 ),
+            (target_type, i8),
+            (target_type, u8),
+            (target_type, i16_x2),
+            (target_type, u16_x2),
+            (target_type, i32_x4),
+            (target_type, u32_x4),
         ]
         if (not target_type.startswith('float64<') or
             config.has_cap('INT64_TO_FLOAT64_CONVERSION')) and (
             not target_type.startswith('float32<') or
-            config.has_cap('INT64_TO_FLOAT32_CONVERSION')):
-            ret += [ ( target_type, i64_x8 ) ]
+                config.has_cap('INT64_TO_FLOAT32_CONVERSION')):
+            ret += [(target_type, i64_x8)]
 
         if (not target_type.startswith('float64<') or
             config.has_cap('UINT64_TO_FLOAT64_CONVERSION')) and (
             not target_type.startswith('float32<') or
-            config.has_cap('UINT64_TO_FLOAT32_CONVERSION')):
-            ret += [ ( target_type, u64_x8 ) ]
+                config.has_cap('UINT64_TO_FLOAT32_CONVERSION')):
+            ret += [(target_type, u64_x8)]
 
         if (not target_type.startswith('int64<') or
             config.has_cap('FLOAT32_TO_INT64_CONVERSION')) and (
             not target_type.startswith('uint64<') or
-            config.has_cap('FLOAT32_TO_UINT64_CONVERSION')):
-            ret += [ ( target_type, f32_x4 ) ]
+                config.has_cap('FLOAT32_TO_UINT64_CONVERSION')):
+            ret += [(target_type, f32_x4)]
 
         if (not target_type.startswith('int64<') or
             config.has_cap('FLOAT64_TO_INT64_CONVERSION')) and (
             not target_type.startswith('uint64<') or
             config.has_cap('FLOAT64_TO_INT64_CONVERSION')) and (
             not target_type.startswith('uint32<') or
-            config.has_cap('FLOAT64_TO_UINT32_CONVERSION')):
-            ret += [ ( target_type, f64_x8 ) ]
+                config.has_cap('FLOAT64_TO_UINT32_CONVERSION')):
+            ret += [(target_type, f64_x8)]
         return ret
 
     add('convert', [
-        TG('vr = to_int8(va);', [ 16 ], create_cvt_types(i8)),
-        TG('vr = to_uint8(va);', [ 16 ], create_cvt_types(u8)),
-        TG('vr = to_int16(va);', [ 16 ], create_cvt_types(i16_x2)),
-        TG('vr = to_uint16(va);', [ 16 ], create_cvt_types(u16_x2)),
-        TG('vr = to_int32(va);', [ 16 ], create_cvt_types(i32_x4)),
-        TG('vr = to_uint32(va);', [ 16 ], create_cvt_types(u32_x4)),
-        TG('vr = to_int64(va);', [ 16 ], create_cvt_types(i64_x8)),
-        TG('vr = to_uint64(va);', [ 16 ], create_cvt_types(u64_x8)),
-        TG('vr = to_float32(va);', [ 16 ], create_cvt_types(f32_x4)),
-        TG('vr = to_float64(va);', [ 16 ], create_cvt_types(f64_x8)),
+        TG('vr = to_int8(va);', [16], create_cvt_types(i8)),
+        TG('vr = to_uint8(va);', [16], create_cvt_types(u8)),
+        TG('vr = to_int16(va);', [16], create_cvt_types(i16_x2)),
+        TG('vr = to_uint16(va);', [16], create_cvt_types(u16_x2)),
+        TG('vr = to_int32(va);', [16], create_cvt_types(i32_x4)),
+        TG('vr = to_uint32(va);', [16], create_cvt_types(u32_x4)),
+        TG('vr = to_int64(va);', [16], create_cvt_types(i64_x8)),
+        TG('vr = to_uint64(va);', [16], create_cvt_types(u64_x8)),
+        TG('vr = to_float32(va);', [16], create_cvt_types(f32_x4)),
+        TG('vr = to_float64(va);', [16], create_cvt_types(f64_x8)),
         TG('vr = to_mask(va);', b, [
-            [ ( mi8, u8 )   ] if config.has_int8() else [],
-            [ ( mi16, u16 ) ] if config.has_int16() else [],
-            [ ( mi32, u32 ) ] if config.has_int32() else [],
-            [ ( mi64, u64 ) ] if config.has_int64() else [],
-            [ ( mf32, f32 ) ] if config.has_float32() else [],
-            [ ( mf64, f64 ) ] if config.has_float64() else [],
+            [(mi8, u8)] if config.has_int8() else [],
+            [(mi16, u16)] if config.has_int16() else [],
+            [(mi32, u32)] if config.has_int32() else [],
+            [(mi64, u64)] if config.has_int64() else [],
+            [(mf32, f32)] if config.has_float32() else [],
+            [(mf64, f64)] if config.has_float64() else [],
         ]),
     ])
 
     permute_types = [
-        [ ( u16, u16 ) ] if config.has_int16() else [],
-        [ ( u32, u32 ) ] if config.has_int32() else [],
-        [ ( u64, u64 ) ] if config.has_int64() else [],
-        [ ( f32, f32 ) ] if config.has_float32() else [],
-        [ ( f64, f64 ) ] if config.has_float64() else [],
-        [ ( u16, mi16 ) ] if config.has_int16() else [],
-        [ ( u32, mi32 ) ] if config.has_int32() else [],
-        [ ( u64, mi64 ) ] if config.has_int64() else [],
-        [ ( f32, mf32 ) ] if config.has_float32() else [],
-        [ ( f64, mf64 ) ] if config.has_float64() else [],
+        [(u16, u16)] if config.has_int16() else [],
+        [(u32, u32)] if config.has_int32() else [],
+        [(u64, u64)] if config.has_int64() else [],
+        [(f32, f32)] if config.has_float32() else [],
+        [(f64, f64)] if config.has_float64() else [],
+        [(u16, mi16)] if config.has_int16() else [],
+        [(u32, mi32)] if config.has_int32() else [],
+        [(u64, mi64)] if config.has_int64() else [],
+        [(f32, mf32)] if config.has_float32() else [],
+        [(f64, mf64)] if config.has_float64() else [],
     ]
 
     permute_bytes_types = [
-        [ ( u8, u8, u8 ) ] if config.has_int8() else [],
-        [ ( u16, u16, u16 ) ] if config.has_int16() else [],
-        [ ( u32, u32, u32 ) ] if config.has_int32() else [],
-        [ ( u64, u64, u64 ) ] if config.has_int64() else [],
-        [ ( f32, f32, u32 ) ] if config.has_float32() else [],
-        [ ( f64, f64, u64 ) ] if config.has_float64() else [],
+        [(u8, u8, u8)] if config.has_int8() else [],
+        [(u16, u16, u16)] if config.has_int16() else [],
+        [(u32, u32, u32)] if config.has_int32() else [],
+        [(u64, u64, u64)] if config.has_int64() else [],
+        [(f32, f32, u32)] if config.has_float32() else [],
+        [(f64, f64, u64)] if config.has_float64() else [],
     ]
 
     shuffle_bytes_types = [
-        [ ( u8, u8, u8, u8 ) ] if config.has_int8() else [],
-        [ ( u16, u16, u16, u16 ) ] if config.has_int16() else [],
-        [ ( u32, u32, u32, u32 ) ] if config.has_int32() else [],
-        [ ( u64, u64, u64, u64 ) ] if config.has_int64() else [],
-        [ ( f32, f32, f32, u32 ) ] if config.has_float32() else [],
-        [ ( f64, f64, f64, u64 ) ] if config.has_float64() else [],
+        [(u8, u8, u8, u8)] if config.has_int8() else [],
+        [(u16, u16, u16, u16)] if config.has_int16() else [],
+        [(u32, u32, u32, u32)] if config.has_int32() else [],
+        [(u64, u64, u64, u64)] if config.has_int64() else [],
+        [(f32, f32, f32, u32)] if config.has_float32() else [],
+        [(f64, f64, f64, u64)] if config.has_float64() else [],
     ]
 
     add('shuffle', [
         TG(CC('vr = shuffle4x2<{0}, {1}, {2}, {3}>(va, vb);',
-            ['0', '1', '2', '3', '4', '5', '6', '7'],
-            ['0', '1', '2', '3', '4', '5', '6', '7'],
-            ['0', '1', '2', '3', '4', '5', '6', '7'],
-            ['0', '1', '2', '3', '4', '5', '6', '7']),
+              ['0', '1', '2', '3', '4', '5', '6', '7'],
+              ['0', '1', '2', '3', '4', '5', '6', '7'],
+              ['0', '1', '2', '3', '4', '5', '6', '7'],
+              ['0', '1', '2', '3', '4', '5', '6', '7']),
             b, u32_3 + f32_3),
         TG(CC('vr = shuffle2x2<{0}, {1}>(va, vb);',
-            ['0', '1', '2', '3'],
-            ['0', '1', '2', '3'],
-            ['0', '1', '2', '3'],
-            ['0', '1', '2', '3']),
+              ['0', '1', '2', '3'],
+              ['0', '1', '2', '3'],
+              ['0', '1', '2', '3'],
+              ['0', '1', '2', '3']),
             b, u32_3 + f32_3),
         TG(CC('vr = permute2<{0}, {1}>(va);',
-            ['0', '1'],
-            ['0', '1'],
-            ['0', '1'],
-            ['0', '1']),
+              ['0', '1'],
+              ['0', '1'],
+              ['0', '1'],
+              ['0', '1']),
             b, permute_types),
         TG(CC('vr = permute4<{0}, {1}, {2}, {3}>(va);',
-            ['0', '1', '2', '3'],
-            ['0', '1', '2', '3'],
-            ['0', '1', '2', '3'],
-            ['0', '1', '2', '3']),
-            [ 32, 64 ], permute_types),
+              ['0', '1', '2', '3'],
+              ['0', '1', '2', '3'],
+              ['0', '1', '2', '3'],
+              ['0', '1', '2', '3']),
+            [32, 64], permute_types),
 
         TG(CC('vr = align2<{0}>(va, vb);',
-            ['0', '1', '2']),
+              ['0', '1', '2']),
             b, u64_3 + f64_3),
         TG(CC('vr = align4<{0}>(va, vb);',
-            ['0', '1', '2', '3', '4']),
+              ['0', '1', '2', '3', '4']),
             b, u32_3 + f32_3),
         TG(CC('vr = align8<{0}>(va, vb);',
-            ['0', '1', '2', '3', '4', '5', '6', '7', '8']),
+              ['0', '1', '2', '3', '4', '5', '6', '7', '8']),
             b, u16_3),
         TG(CC('vr = align16<{0}>(va, vb);',
-            ['0', '1', '2', '3', '4', '5', '6', '7', '8',
-             '9', '10', '11', '12', '13', '14', '15', '16']),
+              ['0', '1', '2', '3', '4', '5', '6', '7', '8',
+               '9', '10', '11', '12', '13', '14', '15', '16']),
             b, u8_3),
 
         TG(CC('vr = splat2<{0}>(va);',
-            ['0', '1']),
+              ['0', '1']),
             b, u64_2 + f64_2),
         TG(CC('vr = splat4<{0}>(va);',
-            ['0', '1', '2', '3']),
+              ['0', '1', '2', '3']),
             b, u32_2 + f32_2),
         TG(CC('vr = splat8<{0}>(va);',
-            ['0', '1', '2', '3', '4', '5', '6', '7']),
+              ['0', '1', '2', '3', '4', '5', '6', '7']),
             b, u16_2),
         TG(CC('vr = splat16<{0}>(va);',
-            ['0', '1', '2', '3', '4', '5', '6', '7',
-             '8', '9', '10', '11', '12', '13', '14', '15']),
+              ['0', '1', '2', '3', '4', '5', '6', '7',
+               '8', '9', '10', '11', '12', '13', '14', '15']),
             b, u8_2),
 
         TG(CC('vr = move2_l<{0}>(va);',
-            ['0', '1', '2']),
+              ['0', '1', '2']),
             b, u64_2 + f64_2),
         TG(CC('vr = move4_l<{0}>(va);',
-            ['0', '1', '2', '3', '4']),
+              ['0', '1', '2', '3', '4']),
             b, u32_2 + f32_2),
         TG(CC('vr = move8_l<{0}>(va);',
-            ['0', '1', '2', '3', '4', '5', '6', '7', '8']),
+              ['0', '1', '2', '3', '4', '5', '6', '7', '8']),
             b, u16_2),
         TG(CC('vr = move16_l<{0}>(va);',
-            ['0', '1', '2', '3', '4', '5', '6', '7',
-             '8', '9', '10', '11', '12', '13', '14', '15', '16']),
+              ['0', '1', '2', '3', '4', '5', '6', '7',
+               '8', '9', '10', '11', '12', '13', '14', '15', '16']),
             b, u8_2),
 
         TG(CC('vr = move2_r<{0}>(va);',
-            ['0', '1', '2']),
+              ['0', '1', '2']),
             b, u64_2 + f64_2),
         TG(CC('vr = move4_r<{0}>(va);',
-            ['0', '1', '2', '3', '4']),
+              ['0', '1', '2', '3', '4']),
             b, u32_2 + f32_2),
         TG(CC('vr = move8_r<{0}>(va);',
-            ['0', '1', '2', '3', '4', '5', '6', '7', '8']),
+              ['0', '1', '2', '3', '4', '5', '6', '7', '8']),
             b, u16_2),
         TG(CC('vr = move16_r<{0}>(va);',
-            ['0', '1', '2', '3', '4', '5', '6', '7',
-             '8', '9', '10', '11', '12', '13', '14', '15', '16']),
+              ['0', '1', '2', '3', '4', '5', '6', '7',
+               '8', '9', '10', '11', '12', '13', '14', '15', '16']),
             b, u8_2),
 
         TG('vr = zip2_lo(va, vb);', b, u64_3 + f64_3),

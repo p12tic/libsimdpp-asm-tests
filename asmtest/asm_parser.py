@@ -19,6 +19,7 @@ import re
 
 
 class AsmFunction:
+
     ''' Defines a function parsed from compiler output. Stores a list of
         parsed instruction names and function name
     '''
@@ -40,7 +41,8 @@ class AsmFunction:
 
     def __repr__(self):
         return 'AsmFunction(name={0}, insns=[{1}])'.format(self.name,
-                ','.join(self.insns))
+                                                           ','.join(self.insns))
+
 
 def parse_compiler_asm_output(output):
     ''' Parses given compiler output string to a list of AsmFunction
@@ -62,7 +64,7 @@ def parse_compiler_asm_output(output):
             if len(parts) == 0:
                 continue
             if parts[0][0] == '.':
-                continue # a directive
+                continue  # a directive
             cur_function.add(parts[0])
         else:
             # may be a function name
@@ -77,7 +79,9 @@ def parse_compiler_asm_output(output):
         functions.append(cur_function)
     return functions
 
+
 class InsnCount:
+
     ''' Represents a mapping between instruction name and instruction count.
     '''
 

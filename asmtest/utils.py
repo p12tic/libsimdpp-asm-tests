@@ -19,7 +19,8 @@ import subprocess
 
 
 def call_program(args, check_returncode=True, cwd=None):
-    pr = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
+    pr = subprocess.Popen(args, stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE, cwd=cwd)
     out, err = pr.communicate()
     if check_returncode and pr.returncode != 0:
         raise Exception("\ncode: " + str(pr.returncode) +
