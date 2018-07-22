@@ -106,8 +106,7 @@ class TestGenerator:
         self.types = force_flat_list(types)
 
     def generate_snippets(self):
-        if (isinstance(self.snippets, CodeGenerator) or
-                isinstance(self.snippets, CodeCombinator)):
+        if isinstance(self.snippets, (CodeGenerator, CodeCombinator)):
             for snip, args in self.snippets.generate():
                 yield snip
         elif isinstance(self.snippets, list):

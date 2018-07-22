@@ -53,21 +53,21 @@ def get_all_tests(config):
     mf32 = 'mask_float32<B/4>'
     mf64 = 'mask_float64<B/8>'
 
-    i8_2 = [(i8,   i8)] if config.has_int8() else []
-    u8_2 = [(u8,   u8)] if config.has_int8() else []
-    mi8_2 = [(mi8,  mi8)] if config.has_int8() else []
-    i16_2 = [(i16,  i16)] if config.has_int16() else []
-    u16_2 = [(u16,  u16)] if config.has_int16() else []
+    i8_2 = [(i8, i8)] if config.has_int8() else []
+    u8_2 = [(u8, u8)] if config.has_int8() else []
+    mi8_2 = [(mi8, mi8)] if config.has_int8() else []
+    i16_2 = [(i16, i16)] if config.has_int16() else []
+    u16_2 = [(u16, u16)] if config.has_int16() else []
     mi16_2 = [(mi16, mi16)] if config.has_int16() else []
-    i32_2 = [(i32,  i32)] if config.has_int32() else []
-    u32_2 = [(u32,  u32)] if config.has_int32() else []
+    i32_2 = [(i32, i32)] if config.has_int32() else []
+    u32_2 = [(u32, u32)] if config.has_int32() else []
     mi32_2 = [(mi32, mi32)] if config.has_int32() else []
-    i64_2 = [(i64,  i64)] if config.has_int64() else []
-    u64_2 = [(u64,  u64)] if config.has_int64() else []
+    i64_2 = [(i64, i64)] if config.has_int64() else []
+    u64_2 = [(u64, u64)] if config.has_int64() else []
     mi64_2 = [(mi64, mi64)] if config.has_int64() else []
-    f32_2 = [(f32,  f32)] if config.has_float32() else []
+    f32_2 = [(f32, f32)] if config.has_float32() else []
     mf32_2 = [(mf32, mf32)] if config.has_float32() else []
-    f64_2 = [(f64,  f64)] if config.has_float64() else []
+    f64_2 = [(f64, f64)] if config.has_float64() else []
     mf64_2 = [(mf64, mf64)] if config.has_float64() else []
 
     int_2 = i8_2 + i16_2 + i32_2 + i64_2
@@ -75,21 +75,21 @@ def get_all_tests(config):
     float_2 = f32_2 + f64_2
     mask_2 = mi8_2 + mi16_2 + mi32_2 + mi64_2 + mf32_2 + mf64_2
 
-    i8_3 = [(i8,   i8,   i8)] if config.has_int8() else []
-    u8_3 = [(u8,   u8,   u8)] if config.has_int8() else []
-    mi8_3 = [(mi8,  mi8,  mi8)] if config.has_int8() else []
-    i16_3 = [(i16,  i16,  i16)] if config.has_int16() else []
-    u16_3 = [(u16,  u16,  u16)] if config.has_int16() else []
+    i8_3 = [(i8, i8, i8)] if config.has_int8() else []
+    u8_3 = [(u8, u8, u8)] if config.has_int8() else []
+    mi8_3 = [(mi8, mi8, mi8)] if config.has_int8() else []
+    i16_3 = [(i16, i16, i16)] if config.has_int16() else []
+    u16_3 = [(u16, u16, u16)] if config.has_int16() else []
     mi16_3 = [(mi16, mi16, mi16)] if config.has_int16() else []
-    i32_3 = [(i32,  i32,  i32)] if config.has_int32() else []
-    u32_3 = [(u32,  u32,  u32)] if config.has_int32() else []
+    i32_3 = [(i32, i32, i32)] if config.has_int32() else []
+    u32_3 = [(u32, u32, u32)] if config.has_int32() else []
     mi32_3 = [(mi32, mi32, mi32)] if config.has_int32() else []
-    i64_3 = [(i64,  i64,  i64)] if config.has_int64() else []
-    u64_3 = [(u64,  u64,  u64)] if config.has_int64() else []
+    i64_3 = [(i64, i64, i64)] if config.has_int64() else []
+    u64_3 = [(u64, u64, u64)] if config.has_int64() else []
     mi64_3 = [(mi64, mi64, mi64)] if config.has_int64() else []
-    f32_3 = [(f32,  f32,  f32)] if config.has_float32() else []
+    f32_3 = [(f32, f32, f32)] if config.has_float32() else []
     mf32_3 = [(mf32, mf32, mf32)] if config.has_float32() else []
-    f64_3 = [(f64,  f64,  f64)] if config.has_float64() else []
+    f64_3 = [(f64, f64, f64)] if config.has_float64() else []
     mf64_3 = [(mf64, mf64, mf64)] if config.has_float64() else []
 
     int_3 = i8_3 + i16_3 + i32_3 + i64_3
@@ -296,13 +296,13 @@ def get_all_tests(config):
     ]
 
     reduce_int_types = [
-        [('int8_t',  i8),
+        [('int8_t', i8),
          ('uint8_t', u8)] if config.has_int8() else [],
-        [('int16_t',  i16),
+        [('int16_t', i16),
          ('uint16_t', u16)] if config.has_int16() else [],
-        [('int32_t',  i32),
+        [('int32_t', i32),
          ('uint32_t', u32)] if config.has_int32() else [],
-        [('int64_t',  i64),
+        [('int64_t', i64),
          ('uint64_t', u64)] if config.has_int64() else [],
     ]
     reduce_float_types = [
@@ -394,30 +394,30 @@ def get_all_tests(config):
             (target_type, i32_x4),
             (target_type, u32_x4),
         ]
-        if (not target_type.startswith('float64<') or
-            config.has_cap('INT64_TO_FLOAT64_CONVERSION')) and (
-            not target_type.startswith('float32<') or
-                config.has_cap('INT64_TO_FLOAT32_CONVERSION')):
+        if (config.has_cap('INT64_TO_FLOAT64_CONVERSION') or
+                not target_type.startswith('float64<')) and (
+            config.has_cap('INT64_TO_FLOAT32_CONVERSION') or
+                not target_type.startswith('float32<')):
             ret += [(target_type, i64_x8)]
 
-        if (not target_type.startswith('float64<') or
-            config.has_cap('UINT64_TO_FLOAT64_CONVERSION')) and (
-            not target_type.startswith('float32<') or
-                config.has_cap('UINT64_TO_FLOAT32_CONVERSION')):
+        if (config.has_cap('UINT64_TO_FLOAT64_CONVERSION') or
+                not target_type.startswith('float64<')) and (
+            config.has_cap('UINT64_TO_FLOAT32_CONVERSION') or
+                not target_type.startswith('float32<')):
             ret += [(target_type, u64_x8)]
 
-        if (not target_type.startswith('int64<') or
-            config.has_cap('FLOAT32_TO_INT64_CONVERSION')) and (
-            not target_type.startswith('uint64<') or
-                config.has_cap('FLOAT32_TO_UINT64_CONVERSION')):
+        if (config.has_cap('FLOAT32_TO_INT64_CONVERSION') or
+                not target_type.startswith('int64<')) and (
+            config.has_cap('FLOAT32_TO_UINT64_CONVERSION') or
+                not target_type.startswith('uint64<')):
             ret += [(target_type, f32_x4)]
 
-        if (not target_type.startswith('int64<') or
-            config.has_cap('FLOAT64_TO_INT64_CONVERSION')) and (
-            not target_type.startswith('uint64<') or
-            config.has_cap('FLOAT64_TO_INT64_CONVERSION')) and (
-            not target_type.startswith('uint32<') or
-                config.has_cap('FLOAT64_TO_UINT32_CONVERSION')):
+        if (config.has_cap('FLOAT64_TO_INT64_CONVERSION') or
+                not target_type.startswith('int64<')) and (
+            config.has_cap('FLOAT64_TO_INT64_CONVERSION') or
+                not target_type.startswith('uint64<')) and (
+            config.has_cap('FLOAT64_TO_UINT32_CONVERSION') or
+                not target_type.startswith('uint32<')):
             ret += [(target_type, f64_x8)]
         return ret
 
