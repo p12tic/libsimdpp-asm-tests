@@ -18,11 +18,19 @@
 
 from __future__ import print_function
 
+import copy
 import json
+import multiprocessing
 import os
+import shutil
+import sys
+import tempfile
+from concurrent import futures
 
 from asmtest.asm_parser import InsnCount
 from asmtest.asm_parser import parse_compiler_asm_output
+from asmtest.codegen import get_code_for_tests
+from asmtest.compiler import compile_code_to_asm
 from asmtest.insn_set import InsnSet
 from asmtest.insn_set import InsnSetConfig
 from asmtest.json_utils import NoIndent
@@ -165,3 +173,87 @@ def parse_test_insns(asm_output, test_list, baseline_test_list):
 
         test.insns.sub(baseline_test.insns)
         merge_equivalent_insns(test.insns)
+
+
+def split_test_list_into_chunks(test_list, tests_per_file):
+    for x in range(0, len(test_list), tests_per_file):
+        yield test_list[x: x + tests_per_file]
+
+
+def flatten_tests_by_cat(tests_by_cat):
+    ret = []
+    for cat in sorted(tests_by_cat.keys()):
+        ret += tests_by_cat[cat]
+    return ret
+
+
+def perform_single_compilation(libsimdpp_path, test_dir, compiler,
+                               insn_set_config, tests_chunk):
+    # compile a second copy of the tests to find out baseline number
+    # of instructions that the test scaffolding emits
+    tests_baseline_chunk = copy.deepcopy(tests_chunk)
+    for i in tests_baseline_chunk:
+        i.ident = i.ident + "_zero"
+        i.desc.code = ""
+
+    test_code = get_code_for_tests(insn_set_config,
+                                   tests_chunk + tests_baseline_chunk)
+
+    # we deliberately don't use tempfile.TemporaryDirectory() so that
+    # the result of failed compilations is preserved if an exception is raised
+    curr_test_dir = tempfile.mkdtemp(dir=test_dir)
+
+    asm_output = compile_code_to_asm(libsimdpp_path, compiler,
+                                     insn_set_config, test_code,
+                                     curr_test_dir)
+
+    parse_test_insns(asm_output, tests_chunk, tests_baseline_chunk)
+
+    shutil.rmtree(curr_test_dir)
+
+
+def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
+                      tests_per_file, stdout=sys.stdout, stderr=sys.stderr):
+    num_threads = multiprocessing.cpu_count() + 1
+    print("Using {0} threads\n".format(num_threads), file=stdout)
+
+    with futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+
+        # we deliberately don't use tempfile.TemporaryDirectory() so that
+        # the result of failed compilations is preserved if an exception is
+        # raised
+        tmp_dir = tempfile.mkdtemp()
+
+        work_futures = []
+
+        # get the number of test cases for progress tracking
+        processed_pos = 0
+
+        for config, tests_by_cat in test_and_config_list:
+            test_list = flatten_tests_by_cat(tests_by_cat)
+
+            for tests_chunk in split_test_list_into_chunks(test_list,
+                                                           tests_per_file):
+                processed_pos += len(tests_chunk)
+                work_futures += [
+                    (processed_pos,
+                     executor.submit(perform_single_compilation,
+                                     libsimdpp_path,
+                                     tmp_dir, compiler, config, tests_chunk)
+                     )
+                ]
+
+        total_test_count = processed_pos
+        for processed_pos, future in work_futures:
+            try:
+                future.result()
+            except Exception as e:
+                for _, future in work_futures:
+                    future.cancel()
+                print("Failed to compile...", file=stdout)
+                print(e, file=stderr)
+                return
+            print('Compiled {0}/{1}'.format(processed_pos, total_test_count),
+                  file=stdout)
+
+        shutil.rmtree(tmp_dir)

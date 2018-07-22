@@ -19,11 +19,13 @@ from __future__ import print_function
 
 import sys
 import unittest
+from unittest import mock
 
 from asmtest.asm_collect import get_output_location_for_settings
 from asmtest.asm_collect import merge_equivalent_insns
 from asmtest.asm_collect import parse_insn_sets
 from asmtest.asm_collect import parse_test_insns
+from asmtest.asm_collect import perform_all_tests
 from asmtest.asm_collect import write_results
 from asmtest.asm_parser import InsnCount
 from asmtest.compiler import CompilerBase
@@ -203,3 +205,58 @@ test_id_id123_base_end:
 
         parse_test_insns(asm, [test], [test_base])
         self.assertEqual({'mov': 1}, test.insns.insns)
+
+
+class TestPerformAllTests(unittest.TestCase):
+
+    @mock.patch('asmtest.asm_collect.perform_single_compilation')
+    @mock.patch('multiprocessing.cpu_count', side_effect=lambda: 2)
+    def test_split(self, _, perform_single_compilation_mock):
+
+        config1 = mock.Mock()
+        config2 = mock.Mock()
+
+        test1_1 = mock.Mock()
+        test1_2 = mock.Mock()
+        test2_1 = mock.Mock()
+        test2_2 = mock.Mock()
+        test2_3 = mock.Mock()
+
+        test_and_config_list = [
+            (config1,
+             {'cat': [test1_1, test1_2]}
+             ),
+            (config2,
+             {'cat': [test2_1, test2_2, test2_3]}
+             ),
+        ]
+
+        path = 'path/to/libsimdpp'
+        compiler = mock.Mock()
+
+        stderr = StringIO()
+        stdout = StringIO()
+
+        perform_all_tests(path, compiler, test_and_config_list, 2,
+                          stdout=stdout, stderr=stderr)
+
+        expected = [
+            mock.call(path, mock.ANY, compiler, config1, [test1_1, test1_2]),
+            mock.call(path, mock.ANY, compiler, config2, [test2_1, test2_2]),
+            mock.call(path, mock.ANY, compiler, config2, [test2_3]),
+        ]
+
+        self.assertEqual(expected,
+                         perform_single_compilation_mock.call_args_list)
+
+        expected_stdout = '''\
+Using 3 threads
+
+Compiled 2/5
+Compiled 4/5
+Compiled 5/5
+'''
+        self.assertEqual(expected_stdout, stdout.getvalue())
+
+        expected_stderr = ''
+        self.assertEqual(expected_stderr, stderr.getvalue())
