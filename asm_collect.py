@@ -38,8 +38,6 @@ from asmtest.codegen import get_code_for_tests
 from asmtest.compiler import compile_code_to_asm
 from asmtest.compiler import detect_compiler
 from asmtest.compiler import detect_supported_insn_sets
-from asmtest.insn_set import InsnSet
-from asmtest.insn_set import InsnSetConfig
 from asmtest.json_utils import NoIndent
 from asmtest.json_utils import NoIndentJsonEncoder
 from asmtest.test_desc import Test
@@ -97,35 +95,6 @@ def generate_test_list(category_to_tests, categories):
                 index += 1
         ret[category] = test_list
     return ret
-
-
-def get_name_to_insn_set_map():
-    return {
-        'HAS_SSE2':     InsnSet.X86_SSE2,
-        'HAS_SSE3':     InsnSet.X86_SSE3,
-        'HAS_SSSE3':    InsnSet.X86_SSSE3,
-        'HAS_SSE4_1':   InsnSet.X86_SSE4_1,
-        'HAS_POPCNT':   InsnSet.X86_SSE4_1,
-        'HAS_AVX':      InsnSet.X86_AVX,
-        'HAS_AVX2':     InsnSet.X86_AVX2,
-        'HAS_FMA3':     InsnSet.X86_FMA3,
-        'HAS_FMA4':     InsnSet.X86_FMA4,
-        'HAS_XOP':      InsnSet.X86_XOP,
-        'HAS_AVX512F':  InsnSet.X86_AVX512F,
-        'HAS_AVX512BW': InsnSet.X86_AVX512BW,
-        'HAS_AVX512DQ': InsnSet.X86_AVX512DQ,
-        'HAS_AVX512VL': InsnSet.X86_AVX512VL,
-        'HAS_NEON':     InsnSet.ARM_NEON,
-    }
-
-
-def parse_insn_sets(insn_set_list):
-    insn_id_to_insn_set = get_name_to_insn_set_map()
-    insn_sets = []
-    for insn_id in insn_id_to_insn_set:
-        if insn_id in insn_set_list:
-            insn_sets.append(insn_id_to_insn_set[insn_id])
-    return InsnSetConfig(insn_sets)
 
 
 def parse_test_insns(asm_output, test_list, baseline_test_list):

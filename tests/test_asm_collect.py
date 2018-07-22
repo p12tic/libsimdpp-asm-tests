@@ -20,6 +20,7 @@ from __future__ import print_function
 import unittest
 
 from asmtest.asm_collect import get_output_location_for_settings
+from asmtest.asm_collect import parse_insn_sets
 from asmtest.compiler import CompilerBase
 from asmtest.insn_set import InsnSet
 from asmtest.insn_set import InsnSetConfig
@@ -64,3 +65,18 @@ class TestGetOutputLocationForSettings(unittest.TestCase):
                    'fma3_avx512f_avx512bw_avx512dq_avx512vl.json'
         result = get_output_location_for_settings(compiler, config, 'cat')
         self.assertEqual(expected, result)
+
+
+class TestParseInsnSets(unittest.TestCase):
+
+    def test_single(self):
+        expected = [InsnSet.X86_FMA3]
+
+        self.assertEqual(expected,
+                         parse_insn_sets('HAS_FMA3').insn_sets)
+
+    def test_multiple(self):
+        expected = [InsnSet.X86_FMA3, InsnSet.X86_FMA4]
+
+        self.assertEqual(expected,
+                         parse_insn_sets('HAS_FMA3,HAS_FMA4').insn_sets)

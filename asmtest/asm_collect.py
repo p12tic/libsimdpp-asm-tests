@@ -16,7 +16,12 @@
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
 
+from __future__ import print_function
+
 import os
+
+from asmtest.insn_set import InsnSet
+from asmtest.insn_set import InsnSetConfig
 
 
 def get_output_location_for_settings(compiler, insn_set_config, category):
@@ -49,3 +54,32 @@ def get_output_location_for_settings(compiler, insn_set_config, category):
     return os.path.join('{0}_{1}'.format(compiler.name, compiler_version),
                         '_'.join([category, compiler.target_arch] +
                                  short_ids) + '.json')
+
+
+def get_name_to_insn_set_map():
+    return {
+        'HAS_SSE2':     InsnSet.X86_SSE2,
+        'HAS_SSE3':     InsnSet.X86_SSE3,
+        'HAS_SSSE3':    InsnSet.X86_SSSE3,
+        'HAS_SSE4_1':   InsnSet.X86_SSE4_1,
+        'HAS_POPCNT':   InsnSet.X86_SSE4_1,
+        'HAS_AVX':      InsnSet.X86_AVX,
+        'HAS_AVX2':     InsnSet.X86_AVX2,
+        'HAS_FMA3':     InsnSet.X86_FMA3,
+        'HAS_FMA4':     InsnSet.X86_FMA4,
+        'HAS_XOP':      InsnSet.X86_XOP,
+        'HAS_AVX512F':  InsnSet.X86_AVX512F,
+        'HAS_AVX512BW': InsnSet.X86_AVX512BW,
+        'HAS_AVX512DQ': InsnSet.X86_AVX512DQ,
+        'HAS_AVX512VL': InsnSet.X86_AVX512VL,
+        'HAS_NEON':     InsnSet.ARM_NEON,
+    }
+
+
+def parse_insn_sets(insn_set_list):
+    insn_id_to_insn_set = get_name_to_insn_set_map()
+    insn_sets = []
+    for insn_id in sorted(insn_id_to_insn_set.keys()):
+        if insn_id in insn_set_list:
+            insn_sets.append(insn_id_to_insn_set[insn_id])
+    return InsnSetConfig(insn_sets)
