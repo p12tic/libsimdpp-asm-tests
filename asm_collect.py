@@ -112,13 +112,22 @@ def main():
         print('Could not detect compiler')
         sys.exit(1)
 
+    libsimdpp_path = os.path.abspath(args.libsimdpp)
+    if not os.path.isdir(libsimdpp_path):
+        msg = 'libsimdpp path {0} does not exist'.format(libsimdpp_path)
+        raise Exception(msg)
+
+    if not os.path.isfile(os.path.join(libsimdpp_path, 'simdpp/simd.h')):
+        msg = 'Invalid libsimdpp install at {0}'.format(libsimdpp_path)
+        raise Exception
+
     if args.instr_sets is not None:
         insn_set_configs = [parse_insn_sets(args.instr_sets)]
     else:
         if args.output_root is None:
             print('Please set --output_root to test all instruction sets')
             sys.exit(1)
-        insn_set_configs = detect_supported_insn_sets(args.libsimdpp, compiler)
+        insn_set_configs = detect_supported_insn_sets(libsimdpp_path, compiler)
 
         print('Supported instruction sets:')
         for config in insn_set_configs:
@@ -135,7 +144,7 @@ def main():
                                                 categories)
                              ) for config in insn_set_configs]
 
-    perform_all_tests(args.libsimdpp, compiler, test_and_config_list,
+    perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
                       args.tests_per_file)
 
     if args.output_root:
