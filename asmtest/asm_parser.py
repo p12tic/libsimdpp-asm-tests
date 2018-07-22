@@ -116,16 +116,3 @@ class InsnCount:
     def sub(self, other):
         for insn, count in other.insns.items():
             self.sub_insn(insn, count)
-
-    def merge_equivalent(self, equivalents):
-        ''' Merges equivalent instructions given a list of lists of equivalent
-            instructions.
-        '''
-        for insn_list in equivalents:
-            if len(insn_list) < 2:
-                continue
-            preferred_insn = insn_list[0]
-            for insn in insn_list:
-                if insn in self.insns:
-                    self.add_insn(preferred_insn, self.insns[insn])
-                    del self.insns[insn]
