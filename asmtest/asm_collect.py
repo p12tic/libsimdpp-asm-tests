@@ -21,6 +21,8 @@ from __future__ import print_function
 import json
 import os
 
+from asmtest.asm_parser import InsnCount
+from asmtest.asm_parser import parse_compiler_asm_output
 from asmtest.insn_set import InsnSet
 from asmtest.insn_set import InsnSetConfig
 from asmtest.json_utils import NoIndent
@@ -139,3 +141,27 @@ def write_results(test_list, file):
 
     json.dump(json_data, file, sort_keys=True, indent=2,
               cls=NoIndentJsonEncoder)
+
+
+def parse_test_insns(asm_output, test_list, baseline_test_list):
+    # The result is stored to the insns member of each object in test_list
+    functions = parse_compiler_asm_output(asm_output)
+
+    for test in test_list + baseline_test_list:
+        function_name = 'test_id_{0}_end'.format(test.ident)
+        found_function = None
+        for fun in functions:
+            if function_name in fun.name:
+                found_function = fun
+                break
+        if found_function is None:
+            raise Exception('Could not find ident {0}'.format(
+                test.ident))
+        test.insns = InsnCount.from_insn_list(found_function.insns)
+
+    # subtract baseline
+    for i, (test, baseline_test) in \
+            enumerate(zip(test_list, baseline_test_list)):
+
+        test.insns.sub(baseline_test.insns)
+        merge_equivalent_insns(test.insns)

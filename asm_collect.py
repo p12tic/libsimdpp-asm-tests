@@ -30,11 +30,9 @@ from concurrent import futures
 
 from asmtest.asm_collect import get_name_to_insn_set_map
 from asmtest.asm_collect import get_output_location_for_settings
-from asmtest.asm_collect import merge_equivalent_insns
 from asmtest.asm_collect import parse_insn_sets
+from asmtest.asm_collect import parse_test_insns
 from asmtest.asm_collect import write_results
-from asmtest.asm_parser import InsnCount
-from asmtest.asm_parser import parse_compiler_asm_output
 from asmtest.codegen import get_code_for_tests
 from asmtest.compiler import compile_code_to_asm
 from asmtest.compiler import detect_compiler
@@ -69,28 +67,6 @@ def generate_test_list(category_to_tests, categories):
                 index += 1
         ret[category] = test_list
     return ret
-
-
-def parse_test_insns(asm_output, test_list, baseline_test_list):
-    # The result is stored to the insns member of each object in test_list
-    functions = parse_compiler_asm_output(asm_output)
-
-    for test in test_list + baseline_test_list:
-        function_name = 'test_id_{0}_end'.format(test.ident)
-        found_function = None
-        for fun in functions:
-            if function_name in fun.name:
-                found_function = fun
-                break
-        if found_function is None:
-            raise Exception('Could not find ident {0}'.format(
-                test.ident))
-        test.insns = InsnCount.from_insn_list(found_function.insns)
-
-    # subtract baseline
-    for i in range(0, len(test_list)):
-        test_list[i].insns.sub(baseline_test_list[i].insns)
-        merge_equivalent_insns(test_list[i].insns)
 
 
 def perform_single_compilation(libsimdpp_path, test_dir, compiler,

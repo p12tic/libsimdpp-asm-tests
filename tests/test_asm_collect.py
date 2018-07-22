@@ -23,6 +23,7 @@ import unittest
 from asmtest.asm_collect import get_output_location_for_settings
 from asmtest.asm_collect import merge_equivalent_insns
 from asmtest.asm_collect import parse_insn_sets
+from asmtest.asm_collect import parse_test_insns
 from asmtest.asm_collect import write_results
 from asmtest.asm_parser import InsnCount
 from asmtest.compiler import CompilerBase
@@ -177,3 +178,28 @@ class TestWriteResults(unittest.TestCase):
 ]'''  # noqa: max-line-length
 
         self.assertEqual(expected, file.getvalue())
+
+
+class TestParseTestInsns(unittest.TestCase):
+
+    def test_simple(self):
+
+        desc = TestDesc('code;code', 16, ['float32<4>', 'int32<4>'])
+        test = Test(desc, 'id123')
+        test_base = Test(desc, 'id123_base')
+
+        asm = '''\
+test_id_id123_end:
+    movaps
+    movaps
+    mov
+    mov
+
+test_id_id123_base_end:
+    movapd
+    movapd
+    mov
+'''
+
+        parse_test_insns(asm, [test], [test_base])
+        self.assertEqual({'mov': 1}, test.insns.insns)
