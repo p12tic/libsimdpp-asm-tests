@@ -100,7 +100,7 @@ class InsnCount:
     def add_insn(self, insn, count=1):
         if insn in self.insns:
             self.insns[insn] += count
-        else:
+        elif count != 0:
             self.insns[insn] = count
 
     def sub_insn(self, insn, count=1):
@@ -108,7 +108,7 @@ class InsnCount:
             self.insns[insn] -= count
             if self.insns[insn] == 0:
                 del self.insns[insn]
-        else:
+        elif count != 0:
             self.insns[insn] = -count
 
     def sub(self, other):
