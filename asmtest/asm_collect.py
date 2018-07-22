@@ -87,23 +87,20 @@ def parse_insn_sets(insn_set_list):
 
 def merge_equivalent_insns(insns):
     ''' This function merges the instruction counts of equivalent instructions.
-        In certain casse the compiler is free to pick several instructions and
-        happens to pick different ones in baseline and non-baseline case.
-        This may lead to negative instruction counts when baseline instruction
-        count is subtracted.
+        This is needed in cases the architecture supports several effectively
+        equivalent instructions and the compiler is free to choose any of them.
     '''
-    groups = [
-        ['movapd', 'movaps', 'movdqa'],
-        ['movupd', 'movups', 'movdqu'],
-        ['vmovapd', 'vmovaps', 'vmovdqa'],
-        ['vmovupd', 'vmovups', 'vmovdqu'],
-    ]
+    groups = {
+        'movaps': ['movapd', 'movdqa'],
+        'movups': ['movupd', 'movdqu'],
+        'vmovaps': ['vmovapd', 'vmovdqa'],
+        'vmovups': ['vmovupd', 'vmovdqu'],
+    }
 
-    for g in groups:
-        for i in g:
-            if i in insns.insns and insns.insns[i] > 0:
-                for j in g:
-                    if j != i and j in insns.insns and insns.insns[j] < 0:
-                        diff = min(insns.insns[i], -insns.insns[j])
-                        insns.insns[i] -= diff
-                        insns.insns[j] += diff
+    for main_insn in groups:
+        eq_insns = groups[main_insn]
+        for eq_insn in eq_insns:
+            if eq_insn in insns.insns:
+                count = insns.insns[eq_insn]
+                insns.sub_insn(eq_insn, count)
+                insns.add_insn(main_insn, count)

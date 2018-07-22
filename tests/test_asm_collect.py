@@ -92,17 +92,27 @@ class TestMergeEquivalentInsns(unittest.TestCase):
 
         merge_equivalent_insns(count)
 
-        expected = {'movapd': 3}
+        expected = {'movaps': 3}
 
         self.assertEqual(expected, count.insns)
 
     def test_eq_same_group(self):
         count = InsnCount()
+        count.insns = {'movapd': 3, 'movaps': 2}
+
+        merge_equivalent_insns(count)
+
+        expected = {'movaps': 5}
+
+        self.assertEqual(expected, count.insns)
+
+    def test_eq_same_group_neg(self):
+        count = InsnCount()
         count.insns = {'movapd': 3, 'movaps': -2}
 
         merge_equivalent_insns(count)
 
-        expected = {'movapd': 1, 'movaps': 0}
+        expected = {'movaps': 1}
 
         self.assertEqual(expected, count.insns)
 
@@ -112,6 +122,6 @@ class TestMergeEquivalentInsns(unittest.TestCase):
 
         merge_equivalent_insns(count)
 
-        expected = {'movapd': 3, 'vmovapd': 2}
+        expected = {'movaps': 3, 'vmovaps': 2}
 
         self.assertEqual(expected, count.insns)
