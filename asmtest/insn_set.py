@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 #   Copyright (C) 2016-2018  Povilas Kanapickas <povilas@radix.lt>
 #
 #   This file is part of libsimdpp asm tests
@@ -16,6 +14,8 @@
 #
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
+
+from __future__ import print_function
 
 
 class InsnSet:

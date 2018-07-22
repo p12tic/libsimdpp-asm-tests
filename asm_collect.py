@@ -17,6 +17,8 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see http://www.gnu.org/licenses/.
 
+from __future__ import print_function
+
 import argparse
 import copy
 import json
@@ -27,7 +29,9 @@ import sys
 import tempfile
 from concurrent import futures
 
+from asmtest.asm_collect import get_name_to_insn_set_map
 from asmtest.asm_collect import get_output_location_for_settings
+from asmtest.asm_collect import parse_insn_sets
 from asmtest.asm_parser import InsnCount
 from asmtest.asm_parser import parse_compiler_asm_output
 from asmtest.codegen import get_code_for_tests
