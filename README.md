@@ -12,6 +12,14 @@ compiler:
 
 `./asm_collect.py g++ <path/to/libsimdpp/checkout> --output_root=instruction_counts`
 
+Prerequisites
+-------------
+
+Both python 2.7 and python 3.x are supported.
+
+The tools require the `futures` and `mock` python packages being installed when
+python 2.7 is used.
+
 License
 -------
 

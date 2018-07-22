@@ -19,7 +19,6 @@ from __future__ import print_function
 
 import sys
 import unittest
-from unittest import mock
 
 from asmtest.asm_collect import get_output_location_for_settings
 from asmtest.asm_collect import merge_equivalent_insns
@@ -37,8 +36,10 @@ from asmtest.test_desc import TestDesc
 if sys.version_info[0] < 3:
     # io.StringIO only supports unicode strings
     from StringIO import StringIO
+    import mock
 else:
     from io import StringIO
+    from unittest import mock  # noqa: pylint: disable=ungrouped-imports
 
 
 class TestGetOutputLocationForSettings(unittest.TestCase):

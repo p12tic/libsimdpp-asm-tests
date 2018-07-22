@@ -70,8 +70,10 @@ def write_results_to_files(output_root, compiler, test_and_config_list):
 
             rel_path = get_output_location_for_settings(compiler, config, cat)
             out_path = os.path.join(output_root, rel_path)
+            out_path_dir = os.path.dirname(out_path)
 
-            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            if not os.path.exists(out_path_dir):
+                os.makedirs(out_path_dir)
             with open(out_path, 'w') as out_f:
                 write_results(test_list, out_f)
 

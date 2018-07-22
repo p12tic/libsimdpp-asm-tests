@@ -21,7 +21,6 @@ import copy
 import multiprocessing
 import os
 import re
-import tempfile
 from concurrent import futures
 
 from asmtest.asm_parser import parse_compiler_asm_output
@@ -30,6 +29,11 @@ from asmtest.insn_set import InsnSet
 from asmtest.insn_set import get_all_capabilities
 from asmtest.insn_set import get_all_insn_set_configs
 from asmtest.utils import call_program
+
+try:
+    from tempfile import TemporaryDirectory
+except ImportError:
+    from backports.tempfile import TemporaryDirectory
 
 
 class CompilerInvocation:
@@ -285,7 +289,7 @@ def parse_supported_capabilities(asm, capabilities):
 
 
 def detect_insn_set_support(libsimdpp_path, compiler, insn_set_config):
-    with tempfile.TemporaryDirectory() as tmp_dir:
+    with TemporaryDirectory() as tmp_dir:
         caps = get_all_capabilities()
         code = get_code_for_testing_insn_set_support(insn_set_config, caps)
         try:
