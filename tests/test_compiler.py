@@ -17,7 +17,7 @@
 
 import unittest
 
-from asmtest.codegen import detect_compiler_from_version_output
+from asmtest.compiler import detect_compiler_from_version_output
 
 
 class TestDetectCompilerFromVersionOutput(unittest.TestCase):
