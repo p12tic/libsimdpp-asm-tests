@@ -19,8 +19,8 @@ install:
   - pip install -r requirements-ci.txt
 
 before_script:
-  - "flake8 --config=config/flake8rc asm_collect.py asmtest tests"
-  - "pylint --rcfile=config/pylintrc asm_collect.py asmtest tests"
+  - "if [[ $TRAVIS_PYTHON_VERSION != 2.6 ]]; then flake8 --config=config/flake8rc asm_collect.py asmtest tests; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION != 2.6 ]]; then pylint --rcfile=config/pylintrc asm_collect.py asmtest tests; fi"
 
 script:
   - "python -m unittest discover"
