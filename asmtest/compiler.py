@@ -21,6 +21,10 @@ import copy
 import multiprocessing
 import os
 import re
+import shutil
+import sys
+import tempfile
+import time
 from concurrent import futures
 
 from asmtest.asm_parser import parse_compiler_asm_output
@@ -29,11 +33,6 @@ from asmtest.insn_set import InsnSet
 from asmtest.insn_set import get_all_capabilities
 from asmtest.insn_set import get_all_insn_set_configs
 from asmtest.utils import call_program
-
-try:
-    from tempfile import TemporaryDirectory
-except ImportError:
-    from backports.tempfile import TemporaryDirectory
 
 
 class CompilerInvocation:
@@ -53,6 +52,9 @@ class CompilerBase(object):
         self.target_arch = None
         self.version = None
 
+    def write_command_file(self, invocation, path):
+        raise NotImplementedError()
+
     def add_insn_set_flags(self, insn_to_flags, flags, insn_sets):
         for insn_set in insn_sets:
             found = False
@@ -67,6 +69,11 @@ class CompilerBase(object):
 
 
 class CompilerGccBase(CompilerBase):
+
+    def get_command(self, invocation):
+        cmd = [self.path] + self.get_flags(invocation)
+        cmd = ['"{0}"'.format(arg) for arg in cmd]
+        return ' '.join(cmd)
 
     def get_flags(self, invocation):
         return [
@@ -134,14 +141,28 @@ class CompilerGccIntel(CompilerGccBase):
 
 class CompilerMsvcBase(CompilerBase):
 
+    def __init__(self):
+        super(CompilerMsvcBase, self).__init__()
+        self.vcvars_path = None
+
+    def get_command(self, invocation):
+        lines = [
+            '@echo off',
+            'call "{0}"'.format(self.vcvars_path),
+        ]
+
+        cmd = [self.path] + self.get_flags(invocation)
+        cmd = ['"{0}"'.format(arg) for arg in cmd]
+        lines += [' '.join(cmd)]
+        return '\n'.join(lines) + '\n'
+
     def get_flags(self, invocation):
         return [
-            '-c', invocation.src_path, '-o', invocation.dst_path,
+            '/c', invocation.src_path, '/Fo{0}'.format(invocation.dst_path),
             # Needed for successful compilation
             '/Qstd=c++11', '/I' + invocation.simdpp_path,
             # Needed to get clean asm output
-            '/O2', '-g0', '--save-temps', '/Oy',
-            '/GS-'
+            '/O2', '/FA', '/GS-'
         ]
 
 
@@ -187,7 +208,7 @@ class CompilerMsvcIntel(CompilerMsvcBase):
                                        invocation.insn_set.insn_sets)
 
 
-def detect_compiler_from_version_output(output):
+def detect_gcc_like_compiler_from_version_output(output):
     lines = output.splitlines()
 
     if 'g++' in lines[0]:
@@ -202,14 +223,12 @@ def detect_compiler_from_version_output(output):
     return (None, None)
 
 
-def get_target_arch(compiler_path, compiler_name):
-    if compiler_name in ['gcc', 'clang', 'gcc-intel']:
-        try:
-            out = call_program([compiler_path, '-dumpmachine'])
-            return out.split('-')[0]
-        except Exception:
-            return None
-    return None
+def get_gcc_like_compiler_target_arch(compiler_path):
+    try:
+        out = call_program([compiler_path, '-dumpmachine'])
+        return out.split('-')[0]
+    except Exception:
+        return None
 
 
 def create_compiler_by_name(name):
@@ -225,24 +244,108 @@ def create_compiler_by_name(name):
     return cxx_name_to_compiler[name]()
 
 
-def detect_compiler(compiler_path):
-    args_to_test = [
-        ['--version'],
+def get_msvc_compiler_info(compiler_id, env):
+    msvc_id_to_env_path = [
+        ('Visual Studio 10 2010', 'VS100COMNTOOLS', '../../VC/bin', '2010'),
+        ('Visual Studio 12 2013', 'VS120COMNTOOLS', '../../VC/bin', '2013'),
+        ('Visual Studio 14 2015', 'VS140COMNTOOLS', '../../VC/bin', '2015'),
+        ('Visual Studio 15 2017', 'VS150COMNTOOLS', '../../VC/bin', '2017'),
     ]
 
-    for args in args_to_test:
-        out = call_program([compiler_path] + args, check_returncode=False)
-        name, version = detect_compiler_from_version_output(out)
-        if name is not None:
-            target_arch = get_target_arch(compiler_path, name)
+    for msvc_id, env_name, relpath, version in msvc_id_to_env_path:
+        if compiler_id.startswith(msvc_id):
+            if env_name not in env:
+                msg = 'MSVC compiler {0} specified, but environment does ' \
+                      'not contain {1} env variable'.format(compiler_id,
+                                                            env_name)
+                raise Exception(msg)
+            return os.path.join(env[env_name], relpath), version
+
+    return None, None
+
+
+def detect_msvc_compiler_from_id(compiler_id, env):
+    if compiler_id.startswith('Visual Studio'):
+        root, version = get_msvc_compiler_info(compiler_id, env)
+        if root is None:
+            raise Exception('Invalid Visual Studio compiler '
+                            'id {0}'.format(compiler_id))
+
+        if 'Win64' in compiler_id:
+            return ('msvc', version, 'x86_64', [
+                os.path.join(root, 'amd64'),
+                os.path.join(root, 'x86_amd64'),
+            ])
+        if 'ARM' in compiler_id:
+            return ('msvc', version, 'armhf', [
+                os.path.join(root, 'amd64_arm'),
+                os.path.join(root, 'x86_arm'),
+            ])
+        return ('msvc', version, 'x86', [
+            os.path.join(root, 'amd64_x86'),
+            root
+        ])
+
+    return None
+
+
+def get_msvc_vcvars_path(root_path):
+    for fn in os.listdir(root_path):
+        if fn.startswith('vcvars') and fn.endswith('.bat'):
+            return os.path.join(root_path, fn)
+    return None
+
+
+def detect_compiler(compiler_path_or_id):
+    ret = detect_msvc_compiler_from_id(compiler_path_or_id, os.environ)
+    if ret is not None:
+        name, version, target_arch, root_paths = ret
+        for root_path in root_paths:
+            if not os.path.isdir(root_path):
+                continue
+
+            path = os.path.join(root_path, 'cl.exe')
+            if not os.path.isfile(path):
+                continue
+
+            vcvars_path = get_msvc_vcvars_path(root_path)
+            if vcvars_path is None:
+                continue
+
             compiler = create_compiler_by_name(name)
             compiler.name = name
-            compiler.path = compiler_path
+            compiler.path = path
+            compiler.vcvars_path = vcvars_path
             compiler.target_arch = target_arch
             compiler.version = version
             return compiler
 
+        raise Exception('Detected MSVC {0} compiler but the expected path '
+                        'does not contain expected tools'.format(version))
+
+    # got only path, assume gcc-like compiler
+    compiler_path = compiler_path_or_id
+
+    out = call_program([compiler_path, '--version'], check_returncode=False)
+    name, version = detect_gcc_like_compiler_from_version_output(out)
+    if name is not None:
+        target_arch = get_gcc_like_compiler_target_arch(compiler_path)
+        compiler = create_compiler_by_name(name)
+        compiler.name = name
+        compiler.path = compiler_path
+        compiler.target_arch = target_arch
+        compiler.version = version
+        return compiler
+
     return None
+
+
+def call_program_file(path, cwd):
+    if sys.platform == 'win32':
+        cmd = ['cmd', '/C', path]
+    else:
+        cmd = ['/bin/bash', path]
+    call_program(cmd, check_returncode=True, cwd=cwd)
 
 
 def compile_code_to_asm(libsimdpp_path, compiler, insn_set_config,
@@ -263,13 +366,10 @@ def compile_code_to_asm(libsimdpp_path, compiler, insn_set_config,
     invocation = CompilerInvocation(insn_set_config, libsimdpp_path,
                                     src_path, dst_path)
 
-    flags = compiler.get_flags(invocation)
-    cmd = [compiler.path] + flags
-
     with open(command_path, 'w') as out_f:
-        out_f.write(' '.join(cmd) + '\n')
+        out_f.write(compiler.get_command(invocation) + '\n')
 
-    call_program(cmd, check_returncode=True, cwd=test_dir)
+    call_program_file(command_path, test_dir)
 
     for asm_path in asm_paths:
         try:
@@ -293,12 +393,14 @@ def parse_supported_capabilities(asm, capabilities):
         elif 'has_no_{0}_cap'.format(cap) in function_names:
             pass
         else:
-            raise Exception('Unknown capability {0}'.format(cap))
+            raise Exception('Did not find capability in functions: '
+                            '"{0}"\n\nCompiler output:\n{1}'.format(cap, asm))
     return supported_capabilities
 
 
 def detect_insn_set_support(libsimdpp_path, compiler, insn_set_config):
-    with TemporaryDirectory() as tmp_dir:
+    try:
+        tmp_dir = tempfile.mkdtemp()
         caps = get_all_capabilities()
         code = get_code_for_testing_insn_set_support(insn_set_config, caps)
         try:
@@ -311,6 +413,16 @@ def detect_insn_set_support(libsimdpp_path, compiler, insn_set_config):
             return False, [], str(e)
 
         return True, parse_supported_capabilities(asm, caps), None
+
+    finally:
+        # MSVC likes to keep files locked even after returning control to the
+        # invoking shell
+        for i in range(10):
+            try:
+                shutil.rmtree(tmp_dir)
+                break
+            except Exception:
+                time.sleep(0.5)
 
 
 def detect_supported_insn_sets(libsimdpp_path, compiler):

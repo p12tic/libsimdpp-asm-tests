@@ -46,6 +46,30 @@ class AsmFunction:
             self.name, ','.join(self.insns))
 
 
+def parse_instruction(line):
+    if line[0] not in ' \t':
+        return None
+    parts = line.split()
+    if len(parts) == 0:
+        return None
+    if parts[0][0] == '.':
+        return None  # a directive
+    return parts[0]
+
+
+def parse_function_name(line):
+    # may be a function name
+    m = re.match(r'(\w*):.*', line)
+    if m is not None:
+        return m.group(1)
+
+    m = re.match(r'_(\w*)\s*PROC.*', line)
+    if m is not None:
+        return m.group(1)
+
+    return None
+
+
 def parse_compiler_asm_output(output):
     ''' Parses given compiler output string to a list of AsmFunction
     '''
@@ -58,21 +82,14 @@ def parse_compiler_asm_output(output):
         if len(line) == 0:
             continue
 
-        if line[0] in ' \t':
-            # may be an instruction
+        insn = parse_instruction(line)
+        if insn:
             if cur_function is None:
                 continue
-            parts = line.split()
-            if len(parts) == 0:
-                continue
-            if parts[0][0] == '.':
-                continue  # a directive
-            cur_function.add(parts[0])
+            cur_function.add(insn)
         else:
-            # may be a function name
-            m = re.match(r'(\w*):.*', line)
-            if m is not None:
-                function_name = m.group(1)
+            function_name = parse_function_name(line)
+            if function_name is not None:
                 if cur_function is not None:
                     functions.append(cur_function)
                 cur_function = AsmFunction(function_name)

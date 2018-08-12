@@ -185,7 +185,7 @@ class TestWriteResults(unittest.TestCase):
 
 class TestParseTestInsns(unittest.TestCase):
 
-    def test_simple(self):
+    def test_simple_gcc(self):
 
         desc = TestDesc('code;code', 16, ['float32<4>', 'int32<4>'])
         test = Test(desc, 'id123')
@@ -202,6 +202,30 @@ test_id_id123_base_end:
     movapd
     movapd
     mov
+'''
+
+        parse_test_insns(asm, [test], [test_base])
+        self.assertEqual({'mov': 1}, test.insns.insns)
+
+    def test_simple_msvc(self):
+
+        desc = TestDesc('code;code', 16, ['float32<4>', 'int32<4>'])
+        test = Test(desc, 'id123')
+        test_base = Test(desc, 'id123_base')
+
+        asm = '''\
+_test_id_id123_end PROC             ; COMDAT
+    movaps
+    movaps
+    mov
+    mov
+_test_id_id123_end ENDP
+
+_test_id_id123_base_end PROC        ; COMDAT
+    movapd
+    movapd
+    mov
+_test_id_id123_base_end ENDP
 '''
 
         parse_test_insns(asm, [test], [test_base])

@@ -82,7 +82,7 @@ def main():
     parser = argparse.ArgumentParser(prog='asm_collect')
     parser.add_argument(
         'cxx', type=str,
-        help='Path to the compiler')
+        help='Path to the compiler or CMake generator name.')
     parser.add_argument(
         'libsimdpp', type=str,
         help='Path to the libsimdpp library')

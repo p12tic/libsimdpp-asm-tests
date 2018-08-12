@@ -209,7 +209,14 @@ def perform_single_compilation(libsimdpp_path, test_dir, compiler,
 
     parse_test_insns(asm_output, tests_chunk, tests_baseline_chunk)
 
-    shutil.rmtree(curr_test_dir)
+    # MSVC likes to keep files locked even after returning control to the
+    # invoking shell
+    for i in range(10):
+        try:
+            shutil.rmtree(curr_test_dir)
+            break
+        except Exception:
+            time.sleep(0.5)
 
 
 def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
