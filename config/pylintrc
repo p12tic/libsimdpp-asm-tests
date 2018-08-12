@@ -138,7 +138,8 @@ disable=
   unsubscriptable-object,
   inconsistent-return-statements,  # (implicit return None)
   len-as-condition,
-  too-many-boolean-expressions
+  too-many-boolean-expressions,
+  useless-object-inheritance
 
 [REPORTS]
 
