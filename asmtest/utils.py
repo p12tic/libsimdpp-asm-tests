@@ -18,14 +18,24 @@
 from __future__ import print_function
 
 import subprocess
+import sys
 
 
 def call_program(args, check_returncode=True, cwd=None):
     pr = subprocess.Popen(args, stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE, cwd=cwd)
     out, err = pr.communicate()
+
+    # on python2 the 'str' type only supports ascii. We don't want to limit
+    # python3 users to that, but at the same time it does not make sense to
+    # convert the codebase to use unicode strings.
+    out_encoding = 'utf-8' if sys.version_info >= (3, 0) else 'ascii'
+
     if check_returncode and pr.returncode != 0:
-        raise Exception("\ncode: " + str(pr.returncode) +
-                        "\nstdout:\n" + out.decode("utf-8") +
-                        "\nstderr:\n" + err.decode("utf-8"))
-    return out.decode('utf-8', errors='ignore')
+        msg = '\ncode: {0}\nstdout:\n{1}\nstderr:\n{2}\n'.format(
+            str(pr.returncode),
+            out.decode(out_encoding, errors='ignore'),
+            err.decode(out_encoding, errors='ignore'))
+        raise Exception(msg)
+
+    return out.decode(out_encoding, errors='ignore')
