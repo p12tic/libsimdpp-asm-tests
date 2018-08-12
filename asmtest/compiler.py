@@ -298,14 +298,15 @@ def detect_insn_set_support(libsimdpp_path, compiler, insn_set_config):
             # libsimdp source
             asm = compile_code_to_asm(libsimdpp_path, compiler,
                                       insn_set_config, code, tmp_dir)
-        except Exception:
-            return False, []
+        except Exception as e:
+            return False, [], str(e)
 
-        return True, parse_supported_capabilities(asm, caps)
+        return True, parse_supported_capabilities(asm, caps), None
 
 
 def detect_supported_insn_sets(libsimdpp_path, compiler):
     supported_configs = []
+    unsupported_configs = []
     all_configs = get_all_insn_set_configs()
 
     num_threads = multiprocessing.cpu_count() + 1
@@ -316,9 +317,11 @@ def detect_supported_insn_sets(libsimdpp_path, compiler):
                         for config in all_configs]
 
         for config, future in work_futures:
-            is_supported, capabilities = future.result()
+            is_supported, capabilities, error = future.result()
             if is_supported:
                 config = copy.deepcopy(config)
                 config.capabilities = capabilities
                 supported_configs.append(config)
-    return supported_configs
+            else:
+                unsupported_configs.append((config, error))
+    return supported_configs, unsupported_configs

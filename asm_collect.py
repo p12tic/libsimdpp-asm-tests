@@ -105,6 +105,10 @@ def main():
         'location: <output_root>/<compiler_id>/' +
         '<category>_<arch>_<enabled_insn_sets>.json. ' +
         'Missing directories are created if needed.')
+    parser.add_argument(
+        '--verbose', action='store_true', default=False,
+        help='If set, produces verbose output')
+
     args = parser.parse_args()
 
     compiler = detect_compiler(args.cxx)
@@ -127,13 +131,19 @@ def main():
         if args.output_root is None:
             print('Please set --output_root to test all instruction sets')
             sys.exit(1)
-        insn_set_configs = detect_supported_insn_sets(libsimdpp_path, compiler)
+        insn_set_configs, insn_set_unsupported_configs = \
+            detect_supported_insn_sets(libsimdpp_path, compiler)
+
+        if args.verbose or len(insn_set_configs) == 0:
+            print('Unsupported instruction sets')
+            for config, error in insn_set_unsupported_configs:
+                print(config.to_short_str())
+                print('Error:')
+                print(error)
 
         print('Supported instruction sets:')
         for config in insn_set_configs:
-            lines = [','.join(config.short_ids()) + ':']
-            lines += [('    ' + cap) for cap in config.capabilities]
-            print('\n'.join(lines))
+            print(config.to_short_str())
 
     categories = None
     if args.categories is not None:

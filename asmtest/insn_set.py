@@ -124,6 +124,18 @@ class InsnSetConfig:
     def has_float64(self):
         return self.has_cap('INT64_SIMD')
 
+    def to_short_str(self):
+        lines = [
+            'IsnsSetConfig(short_ids:{0}'.format(','.join(self.short_ids())),
+        ]
+        if len(self.capabilities):
+            lines += ['    capabilities:']
+            lines += [('        ' + cap) for cap in self.capabilities]
+            lines += [')']
+        else:
+            lines[0] += ')'
+        return '\n'.join(lines)
+
 
 def get_all_insn_set_configs():
     return [
