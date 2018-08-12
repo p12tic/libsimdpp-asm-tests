@@ -251,8 +251,11 @@ def compile_code_to_asm(libsimdpp_path, compiler, insn_set_config,
     # put into test_dir
     src_path = os.path.join(test_dir, 'test.cc')
     dst_path = os.path.join(test_dir, 'test.o')
-    asm_path = os.path.join(test_dir, 'test.s')
     command_path = os.path.join(test_dir, 'compiler.cmd')
+
+    asm_extensions = ['.s', '.asm']
+    asm_paths = [os.path.join(test_dir, 'test'+ext)
+                 for ext in asm_extensions]
 
     with open(src_path, 'w') as out_f:
         out_f.write(code)
@@ -268,8 +271,14 @@ def compile_code_to_asm(libsimdpp_path, compiler, insn_set_config,
 
     call_program(cmd, check_returncode=True, cwd=test_dir)
 
-    with open(asm_path, 'r') as in_f:
-        return in_f.read()
+    for asm_path in asm_paths:
+        try:
+            with open(asm_path, 'r') as in_f:
+                return in_f.read()
+        except Exception:
+            pass
+
+    raise Exception('Could not find assembly output file')
 
 
 def parse_supported_capabilities(asm, capabilities):
