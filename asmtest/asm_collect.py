@@ -36,6 +36,7 @@ from asmtest.insn_set import InsnSetConfig
 from asmtest.json_utils import NoIndent
 from asmtest.json_utils import NoIndentJsonEncoder
 from asmtest.test_desc import group_tests_by_code
+from asmtest.utils import rmtree_with_retry
 
 
 def get_output_location_for_settings(compiler, insn_set_config, category):
@@ -211,12 +212,7 @@ def perform_single_compilation(libsimdpp_path, test_dir, compiler,
 
     # MSVC likes to keep files locked even after returning control to the
     # invoking shell
-    for i in range(10):
-        try:
-            shutil.rmtree(curr_test_dir)
-            break
-        except Exception:
-            time.sleep(0.5)
+    rmtree_with_retry(curr_test_dir)
 
 
 def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,

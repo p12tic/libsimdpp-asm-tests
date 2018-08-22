@@ -17,8 +17,10 @@
 
 from __future__ import print_function
 
+import shutil
 import subprocess
 import sys
+import time
 
 
 def call_program(args, check_returncode=True, cwd=None):
@@ -39,3 +41,14 @@ def call_program(args, check_returncode=True, cwd=None):
         raise Exception(msg)
 
     return out.decode(out_encoding, errors='ignore')
+
+
+def rmtree_with_retry(path, retries=10):
+    for i in range(retries):
+        try:
+            shutil.rmtree(path)
+            return
+        except Exception:
+            time.sleep(0.5)
+    raise Exception('Could not delete path {0} even after {1} retries'.format(
+        path, retries))

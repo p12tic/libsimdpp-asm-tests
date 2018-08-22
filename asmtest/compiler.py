@@ -21,10 +21,8 @@ import copy
 import multiprocessing
 import os
 import re
-import shutil
 import sys
 import tempfile
-import time
 from concurrent import futures
 
 from asmtest.asm_parser import parse_compiler_asm_output
@@ -33,6 +31,7 @@ from asmtest.insn_set import InsnSet
 from asmtest.insn_set import get_all_capabilities
 from asmtest.insn_set import get_all_insn_set_configs
 from asmtest.utils import call_program
+from asmtest.utils import rmtree_with_retry
 
 
 class CompilerInvocation:
@@ -417,12 +416,7 @@ def detect_insn_set_support(libsimdpp_path, compiler, insn_set_config):
     finally:
         # MSVC likes to keep files locked even after returning control to the
         # invoking shell
-        for i in range(10):
-            try:
-                shutil.rmtree(tmp_dir)
-                break
-            except Exception:
-                time.sleep(0.5)
+        rmtree_with_retry(tmp_dir)
 
 
 def detect_supported_insn_sets(libsimdpp_path, compiler):
