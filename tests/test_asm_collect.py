@@ -19,6 +19,7 @@ from __future__ import print_function
 
 import sys
 import unittest
+from concurrent import futures
 
 from asmtest.asm_collect import get_output_location_for_settings
 from asmtest.asm_collect import merge_equivalent_insns
@@ -234,9 +235,11 @@ _test_id_id123_base_end ENDP
 
 class TestPerformAllTests(unittest.TestCase):
 
+    @mock.patch('concurrent.futures.ProcessPoolExecutor',
+                side_effect=futures.ThreadPoolExecutor)
     @mock.patch('asmtest.asm_collect.perform_single_compilation')
     @mock.patch('multiprocessing.cpu_count', side_effect=lambda: 2)
-    def test_split(self, _, perform_single_compilation_mock):
+    def test_split(self, _, perform_single_compilation_mock, _2):
 
         config1 = mock.Mock()
         config2 = mock.Mock()

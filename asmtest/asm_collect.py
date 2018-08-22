@@ -224,7 +224,7 @@ def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
     num_threads = multiprocessing.cpu_count() + 1
     print("Using {0} threads\n".format(num_threads), file=stdout)
 
-    with futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+    with futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
 
         # we deliberately don't use tempfile.TemporaryDirectory() so that
         # the result of failed compilations is preserved if an exception is

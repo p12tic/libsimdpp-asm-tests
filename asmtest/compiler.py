@@ -431,7 +431,7 @@ def detect_supported_insn_sets(libsimdpp_path, compiler):
     all_configs = get_all_insn_set_configs()
 
     num_threads = multiprocessing.cpu_count() + 1
-    with futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+    with futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
         work_futures = [(config,
                          executor.submit(detect_insn_set_support,
                                          libsimdpp_path, compiler, config))
