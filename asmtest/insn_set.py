@@ -103,7 +103,7 @@ class InsnSetConfig:
 
     def has_cap(self, cap):
         if cap not in get_all_capabilities():
-            raise Exception('Unknown capability {0}'.format(cap))
+            raise Exception(f'Unknown capability {cap}')
         return cap in self.capabilities
 
     def has_int8(self):
@@ -125,8 +125,9 @@ class InsnSetConfig:
         return self.has_cap('INT64_SIMD')
 
     def to_short_str(self):
+        inst_ids = ','.join(self.short_ids())
         lines = [
-            'IsnsSetConfig(short_ids:{0}'.format(','.join(self.short_ids())),
+            f'IsnsSetConfig(short_ids:{inst_ids}',
         ]
         if len(self.capabilities):
             lines += ['    capabilities:']

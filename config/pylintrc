@@ -139,7 +139,8 @@ disable=
   inconsistent-return-statements,  # (implicit return None)
   len-as-condition,
   too-many-boolean-expressions,
-  useless-object-inheritance
+  useless-object-inheritance,
+  consider-using-f-string
 
 [REPORTS]
 

@@ -49,7 +49,7 @@ class NoIndentJsonEncoder(json.JSONEncoder):
             key = int(match.group(1))
             return self._replacement_list[key]
         except Exception:
-            raise Exception('Could not parse {0}'.format(match.group(0)))
+            raise Exception(f'Could not parse {match.group(0)}')
 
     def default(self, o):
         if isinstance(o, NoIndent):
@@ -58,7 +58,7 @@ class NoIndentJsonEncoder(json.JSONEncoder):
         return super(NoIndentJsonEncoder, self).default(o)
 
     def iterencode(self, o, **kwargs):
-        id_pattern = r'"{0}(\d+)"'.format(self._unique_json_id())
+        id_pattern = rf'"{self._unique_json_id()}(\d+)"'
         for chunk in super(NoIndentJsonEncoder, self).iterencode(o, **kwargs):
             chunk = re.sub(id_pattern,
                            lambda m: self._handle_noindent_value(m), chunk)

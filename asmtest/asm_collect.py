@@ -66,7 +66,7 @@ def get_output_location_for_settings(compiler, insn_set_config, category):
     if len(short_ids) == 0:
         short_ids = ['none']
 
-    return os.path.join('{0}_{1}'.format(compiler.name, compiler_version),
+    return os.path.join(f'{compiler.name}_{compiler_version}',
                         '_'.join([category, compiler.target_arch] +
                                  short_ids) + '.json')
 
@@ -157,15 +157,14 @@ def parse_test_insns(asm_output, test_list, baseline_test_list):
     functions = parse_compiler_asm_output(asm_output)
 
     for test in test_list + baseline_test_list:
-        function_name = 'test_id_{0}_end'.format(test.ident)
+        function_name = f'test_id_{test.ident}_end'
         found_function = None
         for fun in functions:
             if function_name in fun.name:
                 found_function = fun
                 break
         if found_function is None:
-            raise Exception('Could not find ident {0}'.format(
-                test.ident))
+            raise Exception(f'Could not find ident {test.ident}')
         test.insns = InsnCount.from_insn_list(found_function.insns)
 
     # subtract baseline
@@ -218,7 +217,7 @@ def perform_single_compilation(libsimdpp_path, test_dir, compiler,
 def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
                       tests_per_file, stdout=sys.stdout, stderr=sys.stderr):
     num_threads = multiprocessing.cpu_count() + 1
-    print("Using {0} threads\n".format(num_threads), file=stdout)
+    print(f"Using {num_threads} threads\n", file=stdout)
 
     with futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
 
@@ -256,7 +255,6 @@ def perform_all_tests(libsimdpp_path, compiler, test_and_config_list,
                 print("Failed to compile...", file=stdout)
                 print(e, file=stderr)
                 return
-            print('Compiled {0}/{1}'.format(processed_pos, total_test_count),
-                  file=stdout)
+            print(f'Compiled {processed_pos}/{total_test_count}', file=stdout)
 
         shutil.rmtree(tmp_dir)

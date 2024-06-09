@@ -36,8 +36,8 @@ from asmtest.test_desc import TestDesc
 
 if sys.version_info[0] < 3:
     # io.StringIO only supports unicode strings
-    from StringIO import StringIO
     import mock
+    from StringIO import StringIO
 else:
     from io import StringIO
     from unittest import mock  # noqa: pylint: disable=ungrouped-imports

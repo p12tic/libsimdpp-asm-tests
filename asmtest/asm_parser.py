@@ -42,8 +42,8 @@ class AsmFunction:
         return self.__dict__ == other.__dict__
 
     def __repr__(self):
-        return 'AsmFunction(name={0}, insns=[{1}])'.format(
-            self.name, ','.join(self.insns))
+        insns = ','.join(self.insns)
+        return f'AsmFunction(name={self.name}, insns=[{insns}])'
 
 
 def parse_instruction(line):

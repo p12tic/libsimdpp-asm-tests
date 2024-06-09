@@ -46,7 +46,7 @@ def generate_test_list(category_to_tests, categories):
         tests = {}
         for cat in categories:
             if cat not in category_to_tests:
-                raise Exception('Category {0} does not exist'.format(cat))
+                raise Exception(f'Category {cat} does not exist')
             tests[cat] = category_to_tests[cat]
 
     for category, test_gen_list in tests.items():
@@ -79,6 +79,8 @@ def write_results_to_files(output_root, compiler, test_and_config_list):
 
 
 def main():
+    allowed_insn_sets = ', '.join(get_name_to_insn_set_map().keys())
+
     parser = argparse.ArgumentParser(prog='asm_collect')
     parser.add_argument(
         'cxx', type=str,
@@ -90,8 +92,7 @@ def main():
         '--instr_sets', type=str, default=None,
         help='Instruction sets to test. If not specified, attempts to ' +
         'detect supported instruction sets and tests them all. ' +
-        'Allowed values: {0}'.format(
-            ', '.join(get_name_to_insn_set_map().keys())))
+        f'Allowed values: {allowed_insn_sets}')
     parser.add_argument(
         '--categories', type=str, default=None,
         help='Comma-separated list of test categories to generate results '
@@ -118,12 +119,10 @@ def main():
 
     libsimdpp_path = os.path.abspath(args.libsimdpp)
     if not os.path.isdir(libsimdpp_path):
-        msg = 'libsimdpp path {0} does not exist'.format(libsimdpp_path)
-        raise Exception(msg)
+        raise Exception(f'libsimdpp path {libsimdpp_path} does not exist')
 
     if not os.path.isfile(os.path.join(libsimdpp_path, 'simdpp/simd.h')):
-        msg = 'Invalid libsimdpp install at {0}'.format(libsimdpp_path)
-        raise Exception
+        raise Exception(f'Invalid libsimdpp install at {libsimdpp_path}')
 
     if args.instr_sets is not None:
         insn_set_configs = [parse_insn_sets(args.instr_sets)]
