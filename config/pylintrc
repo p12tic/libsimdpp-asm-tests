@@ -122,7 +122,8 @@ disable=
   len-as-condition,
   too-many-boolean-expressions,
   useless-object-inheritance,
-  consider-using-f-string
+  consider-using-f-string,
+  broad-exception-raised
 
 [REPORTS]
 
