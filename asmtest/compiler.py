@@ -88,7 +88,7 @@ class CompilerGccBase(CompilerBase):
 class CompilerGcc(CompilerGccBase):
 
     def get_flags(self, invocation):
-        flags = super(CompilerGcc, self).get_flags(invocation)
+        flags = super().get_flags(invocation)
         insn_to_flags = (
             (InsnSet.X86_SSE2, ['-msse2']),
             (InsnSet.X86_SSE3, ['-msse3']),
@@ -120,7 +120,7 @@ class CompilerGcc(CompilerGccBase):
 class CompilerGccIntel(CompilerGccBase):
 
     def get_flags(self, invocation):
-        flags = super(CompilerGccIntel, self).get_flags(invocation)
+        flags = super().get_flags(invocation)
         insn_to_flags = (
             (InsnSet.X86_SSE2, ['-msse2']),
             (InsnSet.X86_SSE3, ['-msse3']),
@@ -141,7 +141,7 @@ class CompilerGccIntel(CompilerGccBase):
 class CompilerMsvcBase(CompilerBase):
 
     def __init__(self):
-        super(CompilerMsvcBase, self).__init__()
+        super().__init__()
         self.vcvars_path = None
 
     def get_command(self, invocation):
@@ -168,7 +168,7 @@ class CompilerMsvcBase(CompilerBase):
 class CompilerMsvc(CompilerMsvcBase):
 
     def get_flags(self, invocation):
-        flags = super(CompilerMsvc, self).get_flags(invocation)
+        flags = super().get_flags(invocation)
         insn_to_flags = (
             (InsnSet.X86_SSE2, ['/arch:SSE2']),
             (InsnSet.X86_SSE3, ['/arch:SSE2']),
@@ -187,7 +187,7 @@ class CompilerMsvc(CompilerMsvcBase):
 class CompilerMsvcIntel(CompilerMsvcBase):
 
     def get_flags(self, invocation):
-        flags = super(CompilerMsvcIntel, self).get_flags(invocation)
+        flags = super().get_flags(invocation)
         insn_to_flags = (
             (InsnSet.X86_SSE2, ['/arch:SSE2']),
             (InsnSet.X86_SSE3, ['/arch:SSE3']),
